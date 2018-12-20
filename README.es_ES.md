@@ -1,55 +1,53 @@
-
-![NUU Setup and Structure Guide: Phoenix Framework, Webpack Module Bundler, React Library & GraphQL Query Language](images/logo.png)
+![NUU Setup and Structure Guide: Phoenix Framework, Webpack Module Bundler, React Library & GraphQL Query Language](images/logo.es_ES.png)
 ---
 
-Guide for the initial configuration for projects that are built with the following technologies: [Phoenix](https://phoenixframework.org/) Framework, [Webpack](https://webpack.js.org/) Module Bundler, [React](https://reactjs.org/) Library and [GraphQL](https://graphql.org/) Query Language and how each element should be organized in the internal structure of the project.
+Guía para la configuración inicial de proyectos que se construyan con las tecnologías: Framework [Phoenix](https://phoenixframework.org/), Empaquetador de módulos [Webpack](https://webpack.js.org/), Librería [React](https://reactjs.org/) y Lenguaje de Consultas [GraphQL](https://graphql.org/) y cómo se deberá organizar cada elemento en la estructura interna del proyecto.
 
 [![NUU Group Documents](https://img.shields.io/badge/NUU%20Group-Documents-blue.svg)](https://nuu.co/)
 
-## Table of Contents
+## Tabla de Contenido
 
-- [**Initial setup**](#initial-setup)
-  - [Installation instructions](installation-instructions)
-  - [Configuration](configuration)
-- [**Project structure**](#project-structure)
+- [**Preparación inicial**](#preparación-inicial)
+  - [Instrucciones de instalación](#instrucciones-de-instalación)
+  - [Configuración](configuración)
+- [**Estructura del proyecto**](#estructura-del-proyecto)
   - [Backend](#backend)
   - [Frontend](#frontend)
-- [**Languages**](#languages)
-- [**Copying**](#copying)
-  - [License](#license)
-  - [Attribution](#attribution)
+- [**Idiomas**](#idiomas)
+- [**Derechos**](#derechos)
+  - [Licencia](#licencia)
+  - [Atribución](#atribución)
 
-## Initial setup
+## Preparación inicial
 
-### Installation instructions
+### Instrucciones de instalación
 
-To be able to create projects with this stack of technologies it is necessary to install Phoenix on the system. Webpack, React and QraphQL will be installed later on each project when configuring it.
+Para poder crear proyectos con este grupo de tecnologías es necesario instalar Phoenix en el sistema. Webpack, React y QraphQL se instalarán posteriormente en cada proyecto al configurarlo.
 
-To know if Phoenix has already been installed on the computer, you can enter the following console command:
+Para saber si ya ha sido instalado Phoenix en el equipo se puede intrucir el siguiente comando en consola:
 
 ```bh
 mix phx.new --version
 ```
 
-If this does not return version information, it must have to be installed. In the Phoenix documentation there is a page with the [Installation instructions](https://hexdocs.pm/phoenix/installation.html).
+Si no regresa información de versión, habrá que instalarlo. En la documentación de Phoenix existe una página con las [Instrucciones de instalación](https://hexdocs.pm/phoenix/installation.html).
 
-### Configuration
+### Configuración
 
-1. Create a new Phoenix project:
+1. Crear un proyecto nuevo de Phoenix:
 
     ```bh
     mix phx.new project_name
     ```
-    
-    During the process of creating files, is asked if you want to extract and install the dependencies for the project, indicate yes.
+    Durante el proceso de creación de archivos se pregunta si se desea extraer e instalar las dependencias para el proyecto, indicar que sí.
 
-1. Access to the ***project_name\assets*** directory of the project.
+1. Acceder al directorio ***project_name\assets*** del proyecto.
 
     ```bh
     cd project_name\assets
     ```
 
-1. Uninstall via NPM the following dependencies:
+1. Desinstalar via NPM las siguientes dependencias:
 
     - brunch
     - babel-brunch
@@ -60,13 +58,13 @@ If this does not return version information, it must have to be installed. In th
     npm uninstall --save-dev babel-brunch brunch clean-css-brunch uglify-js-brunch
     ```
 
-1. Delete the ***brunch-config.js*** file.
+1. Eliminar el archivo ***brunch-config.js***
 
     ```bh
     rm brunch-config.js
     ```
 
-1. Install via NPM the following dependencies:
+1. Instalar via NPM las siguientes dependencias:
 
     - webpack
     - webpack-cli
@@ -92,13 +90,13 @@ If this does not return version information, it must have to be installed. In th
     ```bh
     npm install --save-dev webpack webpack-cli copy-webpack-plugin uglifyjs-webpack-plugin graphql react react-dom react-router-dom prop-types @babel/core @babel/cli @babel/preset-env @babel/preset-react @babel/plugin-proposal-class-properties babel-loader css-loader url-loader file-loader mini-css-extract-plugin optimize-css-assets-webpack-plugin
     ```
-1. Create a new file with ***.babelrc*** as file name.
+1. Crear un nuevo archivo con ***.babelrc*** como nombre de archivo.
 
     ```bh
     touch .babelrc
     ```
 
-1. Edit the ***.babelrc*** file and place the following code:
+1. Editar el archivo ***.babelrc*** y colocar el siguiente código:
 
     ```json
     {
@@ -112,7 +110,7 @@ If this does not return version information, it must have to be installed. In th
     }
     ```
 
-1. Edit the ***package.json*** file and replace the value of the `scripts` key with the following code:
+1. Editar el archivo ***package.json*** y substituir el valor de la llave `scripts` con el siguiente código:
 
     ```json
     "scripts": {
@@ -121,13 +119,13 @@ If this does not return version information, it must have to be installed. In th
       },
     ```
 
-1. Create a new file with ***webpack.config.js*** as file name.
+1. Crear un nuevo archivo con ***webpack.config.js*** como nombre de archivo.
 
     ```bh
     touch webpack.config.js
     ```
 
-1. Edit the ***webpack.config.js*** file and place the following code:
+1. Editar el archivo ***webpack.config.js*** y colocar el siguiente código:
 
     ```js
     const path = require('path');
@@ -188,22 +186,22 @@ If this does not return version information, it must have to be installed. In th
     });
     ```
 
-1. Access to the ***project_name\assets\js*** directory of the project.
+1. Acceder al directorio ***project_name\assets\js*** del proyecto.
 
     ```bh
     cd js
     ```
 
-1. Create a new file with ***index.js*** as file name.
+1. Crear un nuevo archivo con ***index.js*** como nombre de archivo.
 
     ```bh
     touch index.js
     ```
 
-1. Edit the ***index.js*** file and place the following code:
+1. Editar el archivo ***index.js*** y colocar el siguiente código:
 
     ```jsx
-    // Dependencies
+    // Dependencias
     import React, { Component } from 'react';
     import ReactDOM from 'react-dom';
 
@@ -221,7 +219,7 @@ If this does not return version information, it must have to be installed. In th
     );
     ```
 
-1. Create the ***components***, ***pages*** and ***data*** directories.
+1. Crear los directorios ***components***, ***pages*** y ***data***.
 
     ```bh
     mkdir components
@@ -229,26 +227,26 @@ If this does not return version information, it must have to be installed. In th
     mkdir data
     ```
 
-1. Edit the ***app.js*** file and after the last `import` place the following code:
+1. Editar el archivo ***app.js*** y después del último `import` agregar el siguiente código:
 
     ```js
     import css from "../css/app.css"
     import { index } from "./index"
     ```
 
-1. Access to the ***project_name\config*** directory of the project.
+1. Acceder al directorio ***project_name\config*** del proyecto.
 
     ```bh
     cd ..\..\config
     ```
 
-1. Edit the ***dev.exs*** file and replace the value of the `watchers` key with the following code:
+1. Editar el archivo ***dev.exs*** y substituir el valor de la llave `watchers` con el siguiente código:
 
     ```elixir
     watchers: [node: ["node_modules/webpack/bin/webpack.js", "--mode", "development", "--watch-stdin", "--color", cd: Path.expand("../assets", __DIR__)]]
     ```
 
-1. Configure in the ***dev.exs*** and ***test.exs*** files the credentials for the databases.
+1. Configura en los archivos ***dev.exs*** y ***test.exs*** las credenciales para las bases de datos.
 
     ```elixir
     config :project_name, ProjectName.Repo,
@@ -260,13 +258,13 @@ If this does not return version information, it must have to be installed. In th
       pool_size: 10
     ```
 
-1. Access to the ***project_name\lib\project_name_web\tamplates\layout*** directory of the project.
+1. Acceder al directorio ***project_name\lib\project_name_web\tamplates\layout*** del proyecto.
 
     ```bh
     cd ..\lib\project_name_web\templates\layout
     ```
 
-1. Edit the ***app.html.eex*** file and replace the tag `<body>` and its content with the following code:
+1. Editar el archivo ***app.html.eex*** y substituir el tag `<body>` y su contenido con el siguiente código:
 
     ```html
     <body>
@@ -277,55 +275,55 @@ If this does not return version information, it must have to be installed. In th
     </body>
     ```
 
-1. Access to the ***project_name\lib\project_name_web\tamplates\page*** directory of the project.
+1. Acceder al directorio ***project_name\lib\project_name_web\tamplates\page*** del proyecto.
 
     ```bh
     cd ..\page
     ```
 
-1. Edit the ***index.html.eex*** file and replace all the content with the following code:
+1. Editar el archivo ***index.html.eex*** y substituir todo el contenido del archivo con el siguiente código:
 
     ```html
     <div id="root"></div>
     ```
 
-1. Access to the root directory of the project: ***project_name***.
+1. Acceder al directorio raiz del proyecto: ***project_name***
 
     ```bh
     cd ..\..\..\..
     ```
 
-1. Create the project database.
+1. Crear la base de datos del proyecto.
 
     ```bh
     mix ecto.create
     ```
 
-To verify that the project has been correctly configured, the server must be initialized with the command:
+Para comprobar que se ha configurado correctamente el proyecto se deberá inicializar el servidor con el comando:
 
 ```bh
 mix phx.server
 ```
 
-In the browser enter the URL `http:\\localhost:4000`, if it displays a blank page with a single text "Ok" and if it shows no errors or warnings in both the server console and the browser, the configuration has been successful.
+En el explorador ingresar la URL `http:\\localhost:4000`, si este despliega una página en blanco con un único texto "Ok" y si no muestra errores ni advertencias tanto en la consola del servidor como en la del explorador, la configuración ha sido exitosa.
 
-## Project structure
+## Estructura del proyecto
 
 ### Backend
 
-*Under redaction.*
+*Bajo redacción.*
 
 ### Frontend
 
-*Under redaction.*
+*Bajo redacción.*
 
-## Languages
+## Idiomas
 
-- [English](README.md)
-- [Spanish (Español)](README.es_ES.md)
+- [Español](README.es_ES.md)
+- [Inglés (English)](README.md)
 
-## Copying
+## Derechos
 
-### License
+### Licencia
 
-![Creative Commons License](http://i.creativecommons.org/l/by/3.0/88x31.png) This work is licensed under a [Creative Commons Attribution 3.0 Unported License](https://creativecommons.org/licenses/by/3.0/deed.en_US).
+![Creative Commons License](http://i.creativecommons.org/l/by/3.0/88x31.png) Este documento está publicado bajo licencia [Creative Commons Reconocimiento 3.0 Unported License](https://creativecommons.org/licenses/by/3.0/deed.es_ES).

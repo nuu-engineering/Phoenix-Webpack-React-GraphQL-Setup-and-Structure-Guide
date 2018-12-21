@@ -305,7 +305,7 @@ Para comprobar que se ha configurado correctamente el proyecto se deberá inicia
 mix phx.server
 ```
 
-En el explorador ingresar la URL `http:\\localhost:4000`. Si este despliega una página en blanco con un único texto "Ok" y no muestra errores ni advertencias tanto en la consola del servidor como en la del explorador, la configuración ha sido exitosa.
+En el explorador ingresar la URL [`localhost:4000`](http://localhost:4000). Si este despliega una página en blanco con un único texto "Ok" y no muestra errores ni advertencias tanto en la consola del servidor como en la del explorador, la configuración ha sido exitosa.
 
 ## Estructura del Proyecto
 

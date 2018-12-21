@@ -307,7 +307,7 @@ To verify that the project has been correctly configured, the server must be ini
 mix phx.server
 ```
 
-In the browser enter the URL `http:\\localhost:4000`. If it displays a blank page with a single text "Ok" and shows no errors or warnings in both the server and the browser console, the configuration has been successful.
+In the browser enter the URL [`localhost:4000`](http://localhost:4000). If it displays a blank page with a single text "Ok" and shows no errors or warnings in both the server and the browser console, the configuration has been successful.
 
 ## Project Structure
 

@@ -7,10 +7,10 @@ Guía para la configuración inicial de proyectos que se construyan con las tecn
 
 ## Tabla de Contenido
 
-- [**Preparación inicial**](#preparación-inicial)
-  - [Instrucciones de instalación](#instrucciones-de-instalación)
+- [**Preparación Inicial**](#preparación-inicial)
+  - [Instrucciones de Instalación](#instrucciones-de-instalación)
   - [Configuración](configuración)
-- [**Estructura del proyecto**](#estructura-del-proyecto)
+- [**Estructura del Proyecto**](#estructura-del-proyecto)
   - [Backend](#backend)
   - [Frontend](#frontend)
 - [**Idiomas**](#idiomas)
@@ -18,9 +18,9 @@ Guía para la configuración inicial de proyectos que se construyan con las tecn
   - [Licencia](#licencia)
   - [Atribución](#atribución)
 
-## Preparación inicial
+## Preparación Inicial
 
-### Instrucciones de instalación
+### Instrucciones de Instalación
 
 Para poder crear proyectos con este grupo de tecnologías es necesario instalar Phoenix en el sistema. Webpack, React y QraphQL se instalarán posteriormente en cada proyecto al configurarlo.
 
@@ -305,9 +305,9 @@ Para comprobar que se ha configurado correctamente el proyecto se deberá inicia
 mix phx.server
 ```
 
-En el explorador ingresar la URL `http:\\localhost:4000`, si este despliega una página en blanco con un único texto "Ok" y si no muestra errores ni advertencias tanto en la consola del servidor como en la del explorador, la configuración ha sido exitosa.
+En el explorador ingresar la URL `http:\\localhost:4000`. Si este despliega una página en blanco con un único texto "Ok" y no muestra errores ni advertencias tanto en la consola del servidor como en la del explorador, la configuración ha sido exitosa.
 
-## Estructura del proyecto
+## Estructura del Proyecto
 
 ### Backend
 

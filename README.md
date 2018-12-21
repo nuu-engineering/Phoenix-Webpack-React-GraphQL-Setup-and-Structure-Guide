@@ -8,10 +8,10 @@ Guide for the initial configuration for projects that are built with the followi
 
 ## Table of Contents
 
-- [**Initial setup**](#initial-setup)
-  - [Installation instructions](installation-instructions)
+- [**Initial Setup**](#initial-setup)
+  - [Installation Instructions](installation-instructions)
   - [Configuration](configuration)
-- [**Project structure**](#project-structure)
+- [**Project Structure**](#project-structure)
   - [Backend](#backend)
   - [Frontend](#frontend)
 - [**Languages**](#languages)
@@ -19,9 +19,9 @@ Guide for the initial configuration for projects that are built with the followi
   - [License](#license)
   - [Attribution](#attribution)
 
-## Initial setup
+## Initial Setup
 
-### Installation instructions
+### Installation Instructions
 
 To be able to create projects with this stack of technologies it is necessary to install Phoenix on the system. Webpack, React and QraphQL will be installed later on each project when configuring it.
 
@@ -307,9 +307,9 @@ To verify that the project has been correctly configured, the server must be ini
 mix phx.server
 ```
 
-In the browser enter the URL `http:\\localhost:4000`, if it displays a blank page with a single text "Ok" and if it shows no errors or warnings in both the server console and the browser, the configuration has been successful.
+In the browser enter the URL `http:\\localhost:4000`. If it displays a blank page with a single text "Ok" and shows no errors or warnings in both the server console and the browser, the configuration has been successful.
 
-## Project structure
+## Project Structure
 
 ### Backend
 

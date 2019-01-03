@@ -246,7 +246,7 @@ If this does not return version information, it must have to be installed. In th
     watchers: [node: ["node_modules/webpack/bin/webpack.js", "--mode", "development", "--watch-stdin", "--color", cd: Path.expand("../assets", __DIR__)]]
     ```
 
-1. Configure in the ***dev.exs*** and ***test.exs*** files the credentials for the databases.
+1. Configure in the ***dev.exs*** and ***test.exs*** files the credentials for the databases to be created.
 
     ```elixir
     config :project_name, ProjectName.Repo,

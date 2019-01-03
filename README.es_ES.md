@@ -244,7 +244,7 @@ Si no regresa información de versión, habrá que instalarlo. En la documentaci
     watchers: [node: ["node_modules/webpack/bin/webpack.js", "--mode", "development", "--watch-stdin", "--color", cd: Path.expand("../assets", __DIR__)]]
     ```
 
-1. Configura en los archivos ***dev.exs*** y ***test.exs*** las credenciales para las bases de datos.
+1. Configura en los archivos ***dev.exs*** y ***test.exs*** las credenciales para las bases de datos que se crearán.
 
     ```elixir
     config :project_name, ProjectName.Repo,

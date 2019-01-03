@@ -224,9 +224,7 @@ If this does not return version information, it must have to be installed. In th
 1. Create the ***components***, ***pages*** and ***data*** directories.
 
     ```bh
-    mkdir components
-    mkdir pages
-    mkdir data
+    mkdir components && mkdir pages && mkdir data
     ```
 
 1. Edit the ***app.js*** file and after the last `import` place the following code:
@@ -293,6 +291,156 @@ If this does not return version information, it must have to be installed. In th
 
     ```bh
     cd ..\..\..\..
+    ```
+
+1. Edit the ***mix.eex*** and add the following dependencies:
+
+    ```elixir
+    {:plug_cowboy, "~> 1.0"},
+    {:absinthe, "~> 1.4.13"},
+    {:absinthe_ecto, "~> 0.1.3"},
+    {:absinthe_plug, "~> 1.4.6"},
+    {:absinthe_phoenix, "~> 1.4.3"}
+    ```
+
+    Delete the following dependence in the same file:
+
+    ```elixir
+    {:cowboy, "~> 1.0"}
+    ```
+
+1. Access to the ***project_name\lib\project_name_web*** directory of the project.
+
+    ```bh
+    cd lib\project_name_web
+    ```
+
+1. Edit the ***router.ex*** file and add the following code after de last `scope`:
+
+    ```elixir
+    if Mix.env == :dev do
+      forward "/graphiql", Absinthe.Plug.GraphiQL,
+        schema: ProjectName.Graphql.Schema,
+        interface: :advanced,
+        context: %{pubsub: ProjectName.Endpoint}
+    end
+    ```
+
+    Do not forget to replace the module name `ProjectName` in this code with the actual project name.
+
+1. Access to the ***project_name\lib\project_name*** directory of the project.
+
+    ```bh
+    cd ..\project_name
+    ```
+
+1. Create the ***graphql*** directory and access it.
+
+    ```bh
+    mkdir graphql && cd graphql
+    ```
+
+1. Create a new file with ***queries.ex*** as file name.
+
+    ```bh
+    touch queries.ex
+    ```
+
+1. Edit the ***queries.ex*** file and place the following code:
+
+    ```elixir
+    defmodule ProjectName.Graphql.Queries do
+      @moduledoc false
+
+      use Absinthe.Schema.Notation
+
+      object :queries do
+      end
+    end
+    ```
+
+    Do not forget to replace the module name `ProjectName` in this code with the actual project name.
+
+1. Create a new file with ***mutations.ex*** as file name.
+
+    ```bh
+    touch mutations.ex
+    ```
+
+1. Edit the ***mutations.ex*** file and place the following code:
+
+    ```elixir
+    defmodule ProjectName.Graphql.Mutations do
+      @moduledoc false
+
+      use Absinthe.Schema.Notation
+
+      object :mutations do
+      end
+    end
+    ```
+
+    Do not forget to replace the module name `ProjectName` in this code with the actual project name.
+
+1. Create a new file with ***subscriptions.ex*** as file name.
+
+    ```bh
+    touch subscriptions.ex
+    ```
+
+1. Edit the ***subscriptions.ex*** file and place the following code:
+
+    ```elixir
+    defmodule ProjectName.Graphql.Subscriptions do
+      @moduledoc false
+
+      use Absinthe.Schema.Notation
+
+      object :subscriptions do
+      end
+    end
+    ```
+
+    Do not forget to replace the module name `ProjectName` in this code with the actual project name.
+
+1. Create a new file with ***schema.ex*** as file name.
+
+    ```bh
+    touch schema.ex
+    ```
+
+1. Edit the ***schema.ex*** file and place the following code:
+
+    ```elixir
+    defmodule ProjectName.Graphql.Schema do
+      @moduledoc false
+
+      use Absinthe.Schema
+
+      import_types ProjectName.Graphql.Queries
+      import_types ProjectName.Graphql.Mutations
+      import_types ProjectName.Graphql.Subscriptions
+      import_types Absinthe.Plug.Types
+      import_types Absinthe.Type.Custom
+
+      query [], do: import_fields :queries
+      mutation [], do: import_fields :mutations
+      subscription [], do: import_fields :subscriptions
+    end
+    ```
+
+    Do not forget to replace the module name `ProjectName` in this code with the actual project name.
+
+1. Access to the root directory of the project: ***project_name***.
+
+    ```bh
+    cd ..\..\..
+    ```
+
+1. Update and compile the new dependencies of the Phoenix project.
+
+    ```bh
+    mix deps.get && mix deps.compile
     ```
 
 1. Create the project database.

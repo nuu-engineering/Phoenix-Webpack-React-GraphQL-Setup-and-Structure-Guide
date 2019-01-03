@@ -222,9 +222,7 @@ Si no regresa información de versión, habrá que instalarlo. En la documentaci
 1. Crear los directorios ***components***, ***pages*** y ***data***.
 
     ```bh
-    mkdir components
-    mkdir pages
-    mkdir data
+    mkdir components && mkdir pages && mkdir data
     ```
 
 1. Editar el archivo ***app.js*** y después del último `import` agregar el siguiente código:
@@ -291,6 +289,156 @@ Si no regresa información de versión, habrá que instalarlo. En la documentaci
 
     ```bh
     cd ..\..\..\..
+    ```
+
+1. Editar el archivo ***mix.eex*** y agregar las siguientes dependencias:
+
+    ```elixir
+    {:plug_cowboy, "~> 1.0"},
+    {:absinthe, "~> 1.4.13"},
+    {:absinthe_ecto, "~> 0.1.3"},
+    {:absinthe_plug, "~> 1.4.6"},
+    {:absinthe_phoenix, "~> 1.4.3"}
+    ```
+
+    En el mismo archivo elimina la siguiente dependencia:
+
+    ```elixir
+    {:cowboy, "~> 1.0"}
+    ```
+
+1. Acceder al directorio ***project_name\lib\project_name_web*** del proyecto.
+
+    ```bh
+    cd lib\project_name_web
+    ```
+
+1. Editar el archivo ***router.ex*** y agregar el siguiente código después del último `scope`:
+
+    ```elixir
+    if Mix.env == :dev do
+      forward "/graphiql", Absinthe.Plug.GraphiQL,
+        schema: ProjectName.Graphql.Schema,
+        interface: :advanced,
+        context: %{pubsub: ProjectName.Endpoint}
+    end
+    ```
+
+    No olvides sibstituir en este código el nombre de módulo `ProjectName` por el nombre real del proyecto.
+
+1. Acceder al directorio ***project_name\lib\project_name*** del proyecto.
+
+    ```bh
+    cd ..\project_name
+    ```
+
+1. Crear el directorio ***graphql*** y acceder a él.
+
+    ```bh
+    mkdir graphql && cd graphql
+    ```
+
+1. Crear un nuevo archivo con ***queries.ex*** como nombre de archivo.
+
+    ```bh
+    touch queries.ex
+    ```
+
+1. Editar el archivo ***queries.ex*** y colocar el siguiente código:
+
+    ```elixir
+    defmodule ProjectName.Graphql.Queries do
+      @moduledoc false
+
+      use Absinthe.Schema.Notation
+
+      object :queries do
+      end
+    end
+    ```
+
+    No olvides sibstituir en este código el nombre de módulo `ProjectName` por el nombre real del proyecto.
+
+1. Crear un nuevo archivo con ***mutations.ex*** como nombre de archivo.
+
+    ```bh
+    touch mutations.ex
+    ```
+
+1. Editar el archivo ***mutations.ex*** y colocar el siguiente código:
+
+    ```elixir
+    defmodule ProjectName.Graphql.Mutations do
+      @moduledoc false
+
+      use Absinthe.Schema.Notation
+
+      object :mutations do
+      end
+    end
+    ```
+
+    No olvides sibstituir en este código el nombre de módulo `ProjectName` por el nombre real del proyecto.
+
+1. Crear un nuevo archivo con ***subscriptions.ex*** como nombre de archivo.
+
+    ```bh
+    touch subscriptions.ex
+    ```
+
+1. Editar el archivo ***subscriptions.ex*** y colocar el siguiente código:
+
+    ```elixir
+    defmodule ProjectName.Graphql.Subscriptions do
+      @moduledoc false
+
+      use Absinthe.Schema.Notation
+
+      object :subscriptions do
+      end
+    end
+    ```
+
+    No olvides sibstituir en este código el nombre de módulo `ProjectName` por el nombre real del proyecto.
+
+1. Crear un nuevo archivo con ***schema.ex*** como nombre de archivo.
+
+    ```bh
+    touch schema.ex
+    ```
+
+1. Editar el archivo ***schema.ex*** y colocar el siguiente código:
+
+    ```elixir
+    defmodule ProjectName.Graphql.Schema do
+      @moduledoc false
+
+      use Absinthe.Schema
+
+      import_types ProjectName.Graphql.Queries
+      import_types ProjectName.Graphql.Mutations
+      import_types ProjectName.Graphql.Subscriptions
+      import_types Absinthe.Plug.Types
+      import_types Absinthe.Type.Custom
+
+      query [], do: import_fields :queries
+      mutation [], do: import_fields :mutations
+      subscription [], do: import_fields :subscriptions
+    end
+    ```
+
+    No olvides sibstituir en este código el nombre de módulo `ProjectName` por el nombre real del proyecto.
+
+1. Acceder al directorio raiz del proyecto: ***project_name***
+
+    ```bh
+    cd ..\..\..
+    ```
+
+1. Actualiza y compila las nuevas dependencias del proyecto de Phoenix.
+
+    ```bh
+    mix deps.get && mix deps.compile
     ```
 
 1. Crear la base de datos del proyecto.

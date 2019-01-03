@@ -291,7 +291,7 @@ Si no regresa información de versión, habrá que instalarlo. En la documentaci
     cd ..\..\..\..
     ```
 
-1. Editar el archivo ***mix.eex*** y agregar las siguientes dependencias:
+1. Editar el archivo ***mix.exs*** y agregar las siguientes dependencias:
 
     ```elixir
     {:plug_cowboy, "~> 1.0"},

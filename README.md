@@ -293,7 +293,7 @@ If this does not return version information, it must have to be installed. In th
     cd ..\..\..\..
     ```
 
-1. Edit the ***mix.eex*** and add the following dependencies:
+1. Edit the ***mix.exs*** and add the following dependencies:
 
     ```elixir
     {:plug_cowboy, "~> 1.0"},

@@ -258,7 +258,7 @@ If this does not return version information, it must have to be installed. In th
       pool_size: 10
     ```
 
-1. Access to the ***project_name\lib\project_name_web\tamplates\layout*** directory of the project.
+1. Access to the ***project_name\lib\project_name_web\templates\layout*** directory of the project.
 
     ```bh
     cd ..\lib\project_name_web\templates\layout
@@ -275,7 +275,7 @@ If this does not return version information, it must have to be installed. In th
     </body>
     ```
 
-1. Access to the ***project_name\lib\project_name_web\tamplates\page*** directory of the project.
+1. Access to the ***project_name\lib\project_name_web\templates\page*** directory of the project.
 
     ```bh
     cd ..\page

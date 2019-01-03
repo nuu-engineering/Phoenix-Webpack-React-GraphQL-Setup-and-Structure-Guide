@@ -256,7 +256,7 @@ Si no regresa información de versión, habrá que instalarlo. En la documentaci
       pool_size: 10
     ```
 
-1. Acceder al directorio ***project_name\lib\project_name_web\tamplates\layout*** del proyecto.
+1. Acceder al directorio ***project_name\lib\project_name_web\templates\layout*** del proyecto.
 
     ```bh
     cd ..\lib\project_name_web\templates\layout
@@ -273,7 +273,7 @@ Si no regresa información de versión, habrá que instalarlo. En la documentaci
     </body>
     ```
 
-1. Acceder al directorio ***project_name\lib\project_name_web\tamplates\page*** del proyecto.
+1. Acceder al directorio ***project_name\lib\project_name_web\templates\page*** del proyecto.
 
     ```bh
     cd ..\page

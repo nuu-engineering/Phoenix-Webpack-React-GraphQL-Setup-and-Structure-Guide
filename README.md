@@ -303,7 +303,7 @@ If this does not return version information, it must have to be installed. In th
     {:absinthe_phoenix, "~> 1.4.3"}
     ```
 
-    Delete the following dependence in the same file:
+    Delete the following dependency in the same file:
 
     ```elixir
     {:cowboy, "~> 1.0"}

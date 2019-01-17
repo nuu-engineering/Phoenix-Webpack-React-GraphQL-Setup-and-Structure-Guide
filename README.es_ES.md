@@ -458,9 +458,9 @@ En el explorador ingresar la URL [`localhost:4000`](http://localhost:4000). Si e
 
 ### Script
 
-Esta es una herramienta que permite crear y configurar automáticamente un nuevo projecto. Esta es un script [`Bash`](https://www.gnu.org/software/bash/) y para utilizarlo es necesario ejecutarlo en una terminal que pueda ejecutar esta interfaz.
+Esta es una herramienta que permite crear y configurar automáticamente un nuevo projecto. Esta es un script [Bash](https://www.gnu.org/software/bash/) y para utilizarlo es necesario ejecutarlo en una terminal que pueda ejecutar esta interfaz.
 
-Enlace de descarga: [`S1.project.sh`](scripts/s1.project.sh)
+Enlace de descarga: [S1.project.sh](scripts/s1.project.sh)
 
 Para poder ejecutarlo en sistemas basados en Unix será necesario darle permisos de ejecución:
 

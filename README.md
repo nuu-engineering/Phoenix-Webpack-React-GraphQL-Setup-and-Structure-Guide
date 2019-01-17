@@ -460,9 +460,9 @@ In the browser enter the URL [`localhost:4000`](http://localhost:4000). If it di
 
 ### Script
 
-This is a tool that allows you to automatically create and configure a new project. This is a [`Bash`](https://www.gnu.org/software/bash/) script, to use it it is necessary to execute it in a terminal that can execute this interface.
+This is a tool that allows you to automatically create and configure a new project. This is a [Bash](https://www.gnu.org/software/bash/) script, to use it it is necessary to execute it in a terminal that can execute this interface.
 
-Download link: [`S1.project.sh`](scripts/s1.project.sh)
+Download link: [S1.project.sh](scripts/s1.project.sh)
 
 To be able to run it on Unix-based systems it will be necessary to give it execution permissions:
 

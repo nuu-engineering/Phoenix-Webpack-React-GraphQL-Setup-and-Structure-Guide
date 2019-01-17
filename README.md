@@ -9,8 +9,8 @@ Guide for the initial configuration for projects that are built with the followi
 ## Table of Contents
 
 - [**Initial Setup**](#initial-setup)
-  - [Installation Instructions](installation-instructions)
-  - [Configuration](configuration)
+  - [Installation Instructions](#installation-instructions)
+  - [Configuration](#configuration)
 - [**Project Structure**](#project-structure)
   - [Backend](#backend)
   - [Frontend](#frontend)
@@ -40,7 +40,7 @@ If this does not return version information, it must have to be installed. In th
     ```bh
     mix phx.new project_name
     ```
-    
+
     During the process of creating files, is asked if you want to extract and install the dependencies for the project, indicate yes.
 
 1. Access to the ***project_name\assets*** directory of the project.

@@ -9,7 +9,7 @@ Guía para la configuración inicial de proyectos que se construyan con el stack
 
 - [**Preparación Inicial**](#preparación-inicial)
   - [Instrucciones de Instalación](#instrucciones-de-instalación)
-  - [Configuración](configuración)
+  - [Configuración](#configuración)
 - [**Estructura del Proyecto**](#estructura-del-proyecto)
   - [Backend](#backend)
   - [Frontend](#frontend)

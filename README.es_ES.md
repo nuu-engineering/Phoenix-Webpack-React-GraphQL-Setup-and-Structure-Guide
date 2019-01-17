@@ -10,6 +10,7 @@ Guía para la configuración inicial de proyectos que se construyan con el stack
 - [**Preparación Inicial**](#preparación-inicial)
   - [Instrucciones de Instalación](#instrucciones-de-instalación)
   - [Configuración](#configuración)
+  - [Script](#script)
 - [**Estructura del Proyecto**](#estructura-del-proyecto)
   - [Backend](#backend)
   - [Frontend](#frontend)
@@ -454,6 +455,18 @@ mix phx.server
 ```
 
 En el explorador ingresar la URL [`localhost:4000`](http://localhost:4000). Si este despliega una página en blanco con un único texto "Ok" y no muestra errores ni advertencias tanto en la consola del servidor como en la del explorador, la configuración ha sido exitosa.
+
+### Script
+
+Esta es una herramienta que permite crear y configurar automáticamente un nuevo projecto. Esta es un script [`Bash`](https://www.gnu.org/software/bash/) y para utilizarlo es necesario ejecutarlo en una terminal que pueda ejecutar esta interfaz.
+
+Enlace de descarga: [`S1.project.sh`](scripts/s1.project.sh)
+
+Para poder ejecutarlo en sistemas basados en Unix será necesario darle permisos de ejecución:
+
+```bh
+chmod +x s1.project.sh
+```
 
 ## Estructura del Proyecto
 

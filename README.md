@@ -11,6 +11,7 @@ Guide for the initial configuration for projects that are built with the followi
 - [**Initial Setup**](#initial-setup)
   - [Installation Instructions](#installation-instructions)
   - [Configuration](#configuration)
+  - [Script](#script)
 - [**Project Structure**](#project-structure)
   - [Backend](#backend)
   - [Frontend](#frontend)
@@ -456,6 +457,18 @@ mix phx.server
 ```
 
 In the browser enter the URL [`localhost:4000`](http://localhost:4000). If it displays a blank page with a single text "Ok" and shows no errors or warnings in both the server and the browser console, the configuration has been successful.
+
+### Script
+
+This is a tool that allows you to automatically create and configure a new project. This is a [`Bash`](https://www.gnu.org/software/bash/) script, to use it it is necessary to execute it in a terminal that can execute this interface.
+
+Download link: [`S1.project.sh`](scripts/s1.project.sh)
+
+To be able to run it on Unix-based systems it will be necessary to give it execution permissions:
+
+```bh
+chmod +x s1.project.sh
+```
 
 ## Project Structure
 

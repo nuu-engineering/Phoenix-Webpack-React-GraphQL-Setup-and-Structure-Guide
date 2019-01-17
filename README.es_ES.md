@@ -1,7 +1,7 @@
 ![NUU Setup and Structure Guide: Phoenix Framework, Webpack Module Bundler, React Library & GraphQL Query Language](images/logo.es_ES.png)
 ---
 
-Guía para la configuración inicial de proyectos que se construyan con las tecnologías: Framework [Phoenix](https://phoenixframework.org/), Empaquetador de módulos [Webpack](https://webpack.js.org/), Librería [React](https://reactjs.org/) y Lenguaje de Consultas [GraphQL](https://graphql.org/) y cómo se deberá organizar cada elemento en la estructura interna del proyecto.
+Guía para la configuración inicial de proyectos que se construyan con el stack de tecnologías: Framework [Phoenix](https://phoenixframework.org/), Empaquetador de módulos [Webpack](https://webpack.js.org/), Librería [React](https://reactjs.org/) y Lenguaje de Consultas [GraphQL](https://graphql.org/) y cómo se deberá organizar cada elemento en la estructura interna del proyecto.
 
 [![NUU Group Documents](https://img.shields.io/badge/NUU%20Group-Documents-blue.svg)](https://nuu.co/)
 

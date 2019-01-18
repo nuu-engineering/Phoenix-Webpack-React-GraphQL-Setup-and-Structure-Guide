@@ -1,6 +1,6 @@
 # -*- ENCODING: UTF-8 -*-
 #!/bin/bash
-VERSION="v1.0"
+VERSION="v1.0.1"
 trap terminate_script SIGINT
 # Remember: sed -i "s|\\r\\n|\\n|g" nuu.project-s1.sh
 
@@ -31,20 +31,20 @@ function display_message () {
   local ARGS_COUNT=0
   if [ "${TYPE}" = "error" ]; then
     local MESSAGE_STEP="\e[31m${TIMELINE_L_MARGIN}${TIMELINE_END_SYMBOL}${TIMELINE_R_MARGIN}\e[0m"
-    local TITLE="Fail: "
+    local TITLE=" Fail: "
   elif [ "${TYPE}" = "green" ]; then
     local MESSAGE_STEP="\e[32m${TIMELINE_L_MARGIN}${TIMELINE_END_SYMBOL}${TIMELINE_R_MARGIN}\e[0m"
-    local TITLE="Done: "
+    local TITLE=" Done: "
   elif [ "${TYPE}" = "warning" ]; then
     local MESSAGE_STEP="\e[33m${TIMELINE_L_MARGIN}${TIMELINE_SYMBOL}${TIMELINE_R_MARGIN}\e[0m"
-    local TITLE="Warning: "
+    local TITLE=" Warning: "
   elif [ "${TYPE}" = "blue" ]; then
     local MESSAGE_STEP="\e[0m${TIMELINE_STEP}"
-    local TITLE="Input: "
+    local TITLE=" Input: "
   elif [ "${TYPE}" = "task" ]; then
     local MESSAGE_STEP="\e[0m${TIMELINE_STEP}"
     let TASK_COUNT++
-    local TITLE="Task ${TASK_COUNT}: "
+    local TITLE=" Task ${TASK_COUNT}: "
   fi
   for ((i=1; i<=${#TITLE}; i++)); do
     local TAB="${TAB} "
@@ -92,7 +92,7 @@ function spinner () {
   SP[5]="⢰"
   SP[6]="⠸"
   SP[7]="⠙"
-  printf "\e[30m\e[1m[ ]\e[0m\b"
+  printf "\e[30m\e[1m\r${TIMELINE_L_MARGIN}\b[ ]\e[0m\b"
   while [ -d "/proc/${SPINNER_PID}" ]; do
     if [ true ]; then
       printf "\b\e[33m\e[1m${SP[i++]}\e[0m"
@@ -162,8 +162,8 @@ function terminate_script () {
 }
 # Asignacion de opciones y argumentos a las variables ------------------------
 # Opciones
-TEMP=$(getopt -o p:m:h --long path:,module:,help -n -- "$@")
-eval set -- "$TEMP"
+OPT_TEMP=$(getopt -o p:m:h --long path:,module:,help -n -- "$@")
+eval set -- "${OPT_TEMP}"
 while true ; do
     case "$1" in
         -h|--help) display_help; exit 0 ;;
@@ -200,6 +200,8 @@ if [ -z "${MODULE}" ]; then
 fi
 if [ -z "${TARGET_PATH}" ]; then
   TARGET_PATH="./" 
+elif [ "${TARGET_PATH: -1}" != "/" ] && [ "${TARGET_PATH: -1}" != "\\" ]; then
+  TARGET_PATH="${TARGET_PATH}/"
 fi
 # Funciones de proceso -------------------------------------------------------
 function validations () {
@@ -225,10 +227,10 @@ function validations () {
     exit 1
   fi
   # Se checa si ya existe un directorio con el nombre de proyecto
-  cd ${TARGET_PATH}
+  cd "${TARGET_PATH}" &>/dev/null
   if [ -d "${PROJECT_NAME}" ]; then
     # <lang> display_message error "Ya existe un directorio \"${PROJECT_NAME}\":" "Selecciona otro directorio para la instalación"
-    display_message error "A directory \"${PROJECT_NAME}\" already exists:" "Select another directory for installation"
+    display_message error "A directory \"${PROJECT_NAME}\" already exists:" "Select another project name for installation"
     terminate_script
     exit 1
   fi
@@ -238,7 +240,7 @@ function task1 () {
   display_message task "Creating Phoenix project "
   {
   #--- 1 ---
-    echo y | mix phx.new "${TARGET_PATH}/${PROJECT_NAME}" --module ${MODULE} --app ${PROJECT_NAME} &>/dev/null
+    echo y | mix phx.new "${PROJECT_NAME}" --module "${MODULE}" &>/dev/null
     # <lang> catch_error $? "No se pudo crear el proyecto de Phoenix correctamente"
     catch_error $? "The Phoenix project could not be created correctly"
   } & spinner
@@ -248,7 +250,7 @@ function task2 () {
   display_message task "Uninstalling Brunch and relative dependencies "
   {
   #--- 2 ---
-    cd "${TARGET_PATH}/${PROJECT_NAME}/assets" &>/dev/null
+    cd "${PROJECT_NAME}/assets" &>/dev/null
     # <lang> catch_error $? "No se pudo acceder al directorio \"${PROJECT_NAME}/assets\""
     catch_error $? "The \"${PROJECT_NAME}/assets\" directory could not be accessed"
   #--- 3 ---
@@ -274,7 +276,7 @@ function task3 () {
   display_message task "Installing Webpack, React, GraphQL and other dependencies "
   {
   #--- 6 ---
-    cd "${TARGET_PATH}/${PROJECT_NAME}/assets" &>/dev/null
+    cd "${PROJECT_NAME}/assets" &>/dev/null
     # <lang> catch_error $? "No se pudo acceder al directorio \"${PROJECT_NAME}/assets\""
     catch_error $? "The \"${PROJECT_NAME}/assets\" directory could not be accessed"
   #--- 7 ---
@@ -288,7 +290,7 @@ function task4 () {
   display_message task "Configuring dependencies and project file structure "
   {
   #--- 8 ---
-    cd "${TARGET_PATH}/${PROJECT_NAME}/assets" &>/dev/null
+    cd "${PROJECT_NAME}/assets" &>/dev/null
     # <lang> catch_error $? "No se pudo acceder al directorio \"${PROJECT_NAME}/assets\""
     catch_error $? "The \"${PROJECT_NAME}/assets\" directory could not be accessed"
   #--- 9 ---
@@ -592,7 +594,7 @@ function task5 () {
   display_message task "Compiling dependencies for Phoenix "
   {
   #--- 42 ---
-    cd "${TARGET_PATH}/${PROJECT_NAME}" &>/dev/null
+    cd "${PROJECT_NAME}" &>/dev/null
     # <lang> catch_error $? "No se pudo acceder al directorio \"${PROJECT_NAME}\""
     catch_error $? "The \"${PROJECT_NAME}\" directory could not be accessed"
   #--- 43 ---
@@ -695,7 +697,7 @@ printf "
 
  Go into your application by running:
  
-   \e[1m$ cd ${PROJECT_NAME}\e[0m
+   \e[1m$ cd ${TARGET_PATH}${PROJECT_NAME}\e[0m
  
  Then configure your database in config/dev.exs and run:
  

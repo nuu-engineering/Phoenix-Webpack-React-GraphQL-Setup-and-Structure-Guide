@@ -1,10 +1,7 @@
 # -*- ENCODING: UTF-8 -*-
 #!/bin/bash
-VERSION="v1.0.1"
+VERSION="v1.0.2"
 trap terminate_script SIGINT
-# Remember: sed -i "s|\\r\\n|\\n|g" nuu.project-s1.sh
-
-# Tiene problemas de compatibilidad con MAC en los subprocesos & con spinner
 
 # Variables ====================================================================
 PROJECT_NAME=""
@@ -13,7 +10,6 @@ TARGET_PATH=""
 # Variables de control -------------------------------------------------------
 SCRIPT_PID=$$
 KERNEL=$(uname -s)
-VERBOSE="false"
 ARGS_COUNT=0
 TASK_COUNT=0
 TIMELINE_COLOR="\e[1m\e[30m"
@@ -32,6 +28,9 @@ function display_message () {
   if [ "${TYPE}" = "error" ]; then
     local MESSAGE_STEP="\e[31m${TIMELINE_L_MARGIN}${TIMELINE_END_SYMBOL}${TIMELINE_R_MARGIN}\e[0m"
     local TITLE=" Fail: "
+  elif [ "${TYPE}" = "arg_error" ]; then
+    local MESSAGE_STEP=""
+    local TITLE="Fail: "
   elif [ "${TYPE}" = "green" ]; then
     local MESSAGE_STEP="\e[32m${TIMELINE_L_MARGIN}${TIMELINE_END_SYMBOL}${TIMELINE_R_MARGIN}\e[0m"
     local TITLE=" Done: "
@@ -62,6 +61,8 @@ function display_message () {
   done 
   if [ "${TYPE}" = "error" ]; then
     printf "\n${MESSAGE_STEP}\e[1m\e[31m${TITLE}\e[0m${MESSAGE}"
+  elif [ "${TYPE}" = "arg_error" ]; then
+    printf "${MESSAGE_STEP}\e[1m\e[31m${TITLE}\e[0m${MESSAGE}"
   elif [ "${TYPE}" = "green" ]; then
     printf "\n${MESSAGE_STEP}\e[1m\e[32m${TITLE}\e[0m${MESSAGE}"
   elif [ "${TYPE}" = "warning" ]; then
@@ -82,24 +83,31 @@ function close_input () {
   printf "\033[1A\e[0m\e[?25l"
 }
 function spinner () {
-  local SPINNER_PID=$!
+  local GROUP_PID=$!
+  local DELAY=0.05
   local i=0
-  SP[0]="⠋"
-  SP[1]="⠇"
-  SP[2]="⡆"
-  SP[3]="⣄"
-  SP[4]="⣠"
-  SP[5]="⢰"
-  SP[6]="⠸"
-  SP[7]="⠙"
+  SP[0]="⠇"
+  SP[1]="⡆"
+  SP[2]="⣄"
+  SP[3]="⣠"
+  SP[4]="⢰"
+  SP[5]="⠸"
+  SP[6]="⠙"
+  SP[7]="⠋"
   printf "\e[30m\e[1m\r${TIMELINE_L_MARGIN}\b[ ]\e[0m\b"
-  while [ -d "/proc/${SPINNER_PID}" ]; do
-    if [ true ]; then
+  if [ "${KERNEL}" = "Darwin" ]; then
+    # "^\s*(^|\W)${GROUP_PID}($|\W)"
+    while [ $(ps ax | grep -w -E "^\s*${GROUP_PID}" | wc -l) != "0" ]; do
       printf "\b\e[33m\e[1m${SP[i++]}\e[0m"
       if [ "${i}" = "${#SP[@]}" ]; then i=0; fi
-      sleep 0.05
-    fi
-  done
+    done
+  else
+    while [ -d "/proc/${GROUP_PID}" ]; do
+      printf "\b\e[33m\e[1m${SP[i++]}\e[0m"
+      if [ "${i}" = "${#SP[@]}" ]; then i=0; fi
+      sleep ${DELAY}
+    done
+  fi
   clear_spinner ok
 }
 function clear_spinner () {
@@ -114,7 +122,7 @@ function catch_error () {
   local LAST_COMMAND_EXIT_STATUS=$1
   local MESSAGE=$2
   if [ "${LAST_COMMAND_EXIT_STATUS}" -ne "0" ]; then
-    # Si se suve la velocidad de la animación del spiner, se corre peligro que
+    # Si se sube la velocidad de la animación del spiner, se corre peligro que
     # se vuelva a imprimir el espiner antes de llegar al comando 'terminate_script'
     clear_spinner fail
     step
@@ -161,33 +169,58 @@ function terminate_script () {
   exit 1
 }
 # Asignacion de opciones y argumentos a las variables ------------------------
-# Opciones
-OPT_TEMP=$(getopt -o p:m:h --long path:,module:,help -n -- "$@")
-eval set -- "${OPT_TEMP}"
-while true ; do
-    case "$1" in
-        -h|--help) display_help; exit 0 ;;
-        -p|--path)
-            case "$2" in
-                "") shift 2 ;;
-                *) TARGET_PATH=$2 ; shift 2 ;;
-            esac ;;
-        -m|--module)
-            case "$2" in
-                "") shift 2 ;;
-                *) MODULE="$(tr '[:lower:]' '[:upper:]' <<< ${2:0:1})${2:1}" ; shift 2 ;;
-            esac ;;
-        --) shift ; break ;;
-        *) echo "Internal error!" ; exit 1 ;;
-    esac
-done
-# Argumentos
-for VAR in "$@"
+while [ "$#" != "0" ]
 do
-  if [ "${ARGS_COUNT}" = "0" ]; then 
-    PROJECT_NAME=$(awk '{print tolower($0)}' <<< "$1")
+  if [ "${1:0:2}" = "--" ]; then
+    if [ "${1}" = "--help" ]; then 
+      display_help
+      exit 0
+    elif [ "${1}" = "--path" ]; then
+      if [ "${2:0:2}" = "--" ] || [ "${2:0:1}" = "-" ] || [ "${2}" = "" ]; then
+        display_message arg_error "Option ${1} require 1 argument"
+        exit 1
+      fi
+      shift
+      TARGET_PATH=${1}
+    elif [ "${1}" = "--module" ]; then
+      if [ "${2:0:2}" = "--" ] || [ "${2:0:1}" = "-" ] || [ "${2}" = "" ]; then
+        display_message arg_error "Option ${1} require 1 argument"
+        exit 1
+      fi
+      shift
+      MODULE="$(tr '[:lower:]' '[:upper:]' <<< ${1:0:1})${1:1}"
+    else
+      display_message arg_error "Unknown option ${1}"
+      exit 1
+    fi
+  elif [ "${1:0:1}" = "-" ]; then
+    if [ "${1}" = "-h" ]; then 
+      display_help
+      exit 0
+    elif [ "${1}" = "-p" ]; then
+      if [ "${2:0:2}" = "--" ] || [ "${2:0:1}" = "-" ] || [ "${2}" = "" ]; then
+        display_message arg_error "Option ${1} require 1 argument"
+        exit 1
+      fi
+      shift
+      TARGET_PATH=${1}
+    elif [ "${1}" = "-m" ]; then
+      if [ "${2:0:2}" = "--" ] || [ "${2:0:1}" = "-" ] || [ "${2}" = "" ]; then
+        display_message arg_error "Option ${1} require 1 argument"
+        exit 1
+      fi
+      shift
+      MODULE="$(tr '[:lower:]' '[:upper:]' <<< ${1:0:1})${1:1}"
+    else
+      display_message arg_error "Unknown option ${1}"
+      exit 1
+    fi
+  else
+    if [ "${ARGS_COUNT}" = "0" ]; then 
+      PROJECT_NAME=$(awk '{print tolower($0)}' <<< "$1")
+    fi
+    let ARGS_COUNT++
   fi
-  let ARGS_COUNT++
   shift
 done 
 # Argumentos default
@@ -257,7 +290,7 @@ function task2 () {
     if [ "${KERNEL}" = "Darwin" ]; then 
       sed -i "" $'s/{},/{},\\\n  "description": " ",/g' package.json &>/dev/null
     else 
-      sed -i 's/{},/{},\n  "description": " ",/g' package.json &>/dev/null
+      sed -i $'s/{},/{},\\\n  "description": " ",/g' package.json &>/dev/null
     fi
     # <lang> catch_error $? "No se pudo agregar descripción al archivo \"package.json\""
     catch_error $? "Unable to add description to \"package.json\" file"
@@ -360,17 +393,17 @@ EOM
     catch_error $? "Unable to add content to \"${PROJECT_NAME}/assets/webpack.config.js\" file"
   #--- 11 ---
     if [ "${KERNEL}" = "Darwin" ]; then
-      sed -i "" 's/"deploy": "brunch build --production"/"deploy": "webpack --mode production"/g' package.json &>/dev/null
+      sed -i "" $'s/"deploy": "brunch build --production"/"deploy": "webpack --mode production"/g' package.json &>/dev/null
     else
-      sed -i 's/"deploy": "brunch build --production"/"deploy": "webpack --mode production"/g' package.json &>/dev/null
+      sed -i $'s/"deploy": "brunch build --production"/"deploy": "webpack --mode production"/g' package.json &>/dev/null
     fi
     # <lang> catch_error $? "No se pudo reemplazar el script \"deploy\" en \"${PROJECT_NAME}/assets/package.json\""
     catch_error $? "Unable to replace script \"deploy\" in \"${PROJECT_NAME}/assets/package.json\" file"
   #--- 12 ---
     if [ "${KERNEL}" = "Darwin" ]; then
-      sed -i "" 's/"watch": "brunch watch --stdin"/"start": "webpack --mode development --watch-stdin --color"/g' package.json &>/dev/null
+      sed -i "" $'s/"watch": "brunch watch --stdin"/"start": "webpack --mode development --watch-stdin --color"/g' package.json &>/dev/null
     else
-      sed -i 's/"watch": "brunch watch --stdin"/"start": "webpack --mode development --watch-stdin --color"/g' package.json &>/dev/null
+      sed -i $'s/"watch": "brunch watch --stdin"/"start": "webpack --mode development --watch-stdin --color"/g' package.json &>/dev/null
     fi
     # <lang> catch_error $? "No se pudo reemplazar el script \"watch\" en \"${PROJECT_NAME}/assets/package.json\""
     catch_error $? "Unable to replace script \"watch\" in \"${PROJECT_NAME}/assets/package.json\" file"
@@ -380,9 +413,9 @@ EOM
     catch_error $? "The \"${PROJECT_NAME}/config\" directory could not be accessed"
   #--- 14 ---
     if [ "${KERNEL}" = "Darwin" ]; then
-      sed -i "" 's|watchers: \[node: \["node_modules/brunch/bin/brunch", "watch", "--stdin",|watchers: \[node: \["node_modules/webpack/bin/webpack.js", "--mode", "development", "--watch-stdin", "--color",|g' dev.exs &>/dev/null
+      sed -i "" $'s|watchers: \[node: \["node_modules/brunch/bin/brunch", "watch", "--stdin",|watchers: \[node: \["node_modules/webpack/bin/webpack.js", "--mode", "development", "--watch-stdin", "--color",|g' dev.exs &>/dev/null
     else
-      sed -i 's|watchers: \[node: \["node_modules/brunch/bin/brunch", "watch", "--stdin",|watchers: \[node: \["node_modules/webpack/bin/webpack.js", "--mode", "development", "--watch-stdin", "--color",|g' dev.exs &>/dev/null
+      sed -i $'s|watchers: \[node: \["node_modules/brunch/bin/brunch", "watch", "--stdin",|watchers: \[node: \["node_modules/webpack/bin/webpack.js", "--mode", "development", "--watch-stdin", "--color",|g' dev.exs &>/dev/null
     fi
     # <lang> catch_error $? "No se pudo reemplazar el script \"watchers\" en \"${PROJECT_NAME}/config/dev.exs\""
     catch_error $? "Unable to replace script \"watchers\" in \"${PROJECT_NAME}/config/dev.exs\" file"
@@ -451,7 +484,8 @@ EOM
       catch_error $? "Unable to create \"${PROJECT_NAME}/assets/js/data\" directory"
     #--- 24 ---
       if [ "$KERNEL" = "Darwin" ]; then
-        sed -i "" $'/"phoenix_html"/a \import css from "..\/css\/app.css"\\\nimport { index } from ".\/index"\\\n' app.js &>/dev/null
+        sed -i "" $'/"phoenix_html"/a \
+        import css from "..\/css\/app.css"\\\nimport { index } from ".\/index"\\\n' app.js &>/dev/null
       else
         sed -i $'/"phoenix_html"/a \import css from "..\/css\/app.css"\\\nimport { index } from ".\/index"\\\n' app.js &>/dev/null
       fi
@@ -463,9 +497,9 @@ EOM
       catch_error $? "The \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/layout\" directory could not be accessed"
     #--- 26 ---
       if [ "${KERNEL}" = "Darwin" ]; then
-        sed -i "" '/<body>/,/<\/body>/d' app.html.eex &>/dev/null
+        sed -i "" $'/<body>/,/<\/body>/d' app.html.eex &>/dev/null
       else
-        sed -i '/<body>/,/<\/body>/d' app.html.eex &>/dev/null
+        sed -i $'/<body>/,/<\/body>/d' app.html.eex &>/dev/null
       fi
       # <lang> catch_error $? "No se pudo reemplazar el código en \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/layout/app.html.eex\""
       catch_error $? "Could not replace the code in \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/layout/app.html.eex\" file"
@@ -601,7 +635,7 @@ function task5 () {
     if [ "${KERNEL}" = "Darwin" ]; then
       sed -E -i "" $'s/{:cowboy, "~> [0-9]+\.[0-9]+"}/{:plug_cowboy, "~> 1.0"},\\\n      {:absinthe, "~> 1.4.13"},\\\n      {:absinthe_ecto, "~> 0.1.3"},\\\n      {:absinthe_plug, "~> 1.4.6"},\\\n      {:absinthe_phoenix, "~> 1.4.3"}/' mix.exs &>/dev/null
     else
-      sed -i 's/{:cowboy, "~> [0-9][0-9]*\.[0-9][0-9]*"}/{:plug_cowboy, "~> 1.0"},\n      {:absinthe, "~> 1.4.13"},\n      {:absinthe_ecto, "~> 0.1.3"},\n      {:absinthe_plug, "~> 1.4.6"},\n      {:absinthe_phoenix, "~> 1.4.3"}/' mix.exs &>/dev/null
+      sed -i $'s/{:cowboy, "~> [0-9][0-9]*\.[0-9][0-9]*"}/{:plug_cowboy, "~> 1.0"},\\\n      {:absinthe, "~> 1.4.13"},\\\n      {:absinthe_ecto, "~> 0.1.3"},\\\n      {:absinthe_plug, "~> 1.4.6"},\\\n      {:absinthe_phoenix, "~> 1.4.3"}/' mix.exs &>/dev/null
     fi
     # <lang> catch_error $? "No se pudo modificar las dependencias en \"${PROJECT_NAME}/mix.exs\""
     catch_error $? "The dependencies could not be modified in \"${PROJECT_NAME}/mix.exs\" file"
@@ -688,7 +722,6 @@ task2
 task3
 task4
 task5
-
 # ------------------------------------------------------------------------------
 step
 # <lang> display_message green "¡Se ha creado y configurado correctamente el proyecto!\n"
@@ -715,3 +748,4 @@ printf "
 printf "\e[?25h"
 exit 0
 # ==============================================================================
+

@@ -30,20 +30,20 @@ function display_message () {
     local TITLE=" Error: "
   elif [ "${TYPE}" = "arg_error" ]; then
     local MESSAGE_STEP=""
-    local TITLE="Argument error: "
+    local TITLE="Error de argumento: "
   elif [ "${TYPE}" = "green" ]; then
     local MESSAGE_STEP="\e[32m${TIMELINE_L_MARGIN}${TIMELINE_END_SYMBOL}${TIMELINE_R_MARGIN}\e[0m"
-    local TITLE=" Done: "
+    local TITLE=" Terminado: "
   elif [ "${TYPE}" = "warning" ]; then
     local MESSAGE_STEP="\e[33m${TIMELINE_L_MARGIN}${TIMELINE_SYMBOL}${TIMELINE_R_MARGIN}\e[0m"
-    local TITLE=" Warning: "
+    local TITLE=" Aviso: "
   elif [ "${TYPE}" = "blue" ]; then
     local MESSAGE_STEP="\e[0m${TIMELINE_STEP}"
-    local TITLE=" Input: "
+    local TITLE=" Entrada: "
   elif [ "${TYPE}" = "task" ]; then
     local MESSAGE_STEP="\e[0m${TIMELINE_STEP}"
     let TASK_COUNT++
-    local TITLE=" Task ${TASK_COUNT}: "
+    local TITLE=" Tarea ${TASK_COUNT}: "
   fi
   for ((i=1; i<=${#TITLE}; i++)); do
     local TAB="${TAB} "
@@ -132,37 +132,37 @@ function catch_error () {
   fi
 }
 function display_help () {
-  printf " \e[34m▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄\e[0m\b
- \e[1m\e[44m  NUU Group: S1 Project Setup Script                    \e[0m\b
- \e[34m▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀\e[0m\b
- Tool for creation and initial configuration for projects
- that are built with the following technologies stack:
+  printf " \e[34m▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄\e[0m\b
+ \e[1m\e[44m  NUU Group: Script de Configuración para Proyecto S1    \e[0m\b
+ \e[34m▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀\e[0m\b
+ Herramienta para la creación y configuración inicial para
+ proyectos hechos con el siguiente stack de tecnologías:
 
- \e[1m•\e[0m Phoenix Framework
- \e[1m•\e[0m Webpack Module Bundler
- \e[1m•\e[0m React Library
- \e[1m•\e[0m GraphQL Query Language
+ \e[1m•\e[0m Framework Phoenix
+ \e[1m•\e[0m Empaquetador de módulos Webpack
+ \e[1m•\e[0m Librería React
+ \e[1m•\e[0m Lenguaje de Consultas GraphQL
 
- \e[1mVersion: \e[0m\b ${VERSION}
- \e[1mLanguage: \e[0m\b English
+ \e[1mVersión: \e[0m\b ${VERSION}
+ \e[1mIdioma: \e[0m\b Español
 
- \e[1mUsage:\e[0m\b
-   ${0} [\e[33mapplication_name \e[0m\b]
+ \e[1mUso:\e[0m\b
+   ${0} [\e[33mnombre_de_aplicación \e[0m\b]
 
- \e[1mOptions:\e[0m\b
+ \e[1mOpciones:\e[0m\b
    -h --help
-   -p --path [\e[33mtarget_path \e[0m\b]
-   -m --module [\e[33mbase_module \e[0m\b]\n"
+   -p --path [\e[33mruta_destino \e[0m\b]
+   -m --module [\e[33mmódulo_base \e[0m\b]\n"
 }
 function display_header () {
   printf "
-${TIMELINE_STEP}                          \e[30m\e[1m│\e[0m  \e[1mProject technologies stack:\e[0m  \e[30m\e[1m│\e[0m  \e[1mRequired installed software:\e[0m
-${TIMELINE_STEP} \e[1m██▄███▄ ██▌ ▐██ ██▌ ▐██\e[0m  \e[30m\e[1m│\e[0m                               \e[30m\e[1m│\e[0m 
-${TIMELINE_STEP} \e[1m██▌ ▐██ ██▌ ▐██ ██▌ ▐██\e[0m  \e[30m\e[1m│\e[0m  • Phoenix Framework          \e[30m\e[1m│\e[0m  Phoenix      \e[30m\e[1m[\e[0m${PHX_S}\e[30m\e[1m]\e[0m ${PHX_V}
-${TIMELINE_STEP} \e[1m██▌ ▐███▀███▀██ ▀███▀██\e[0m  \e[30m\e[1m│\e[0m  • Webpack Module Bundler     \e[30m\e[1m│\e[0m   └ Elixir    \e[30m\e[1m[\e[0m${EX_S}\e[30m\e[1m]\e[0m ${EX_V}
-${TIMELINE_STEP}  NUU Group Engineering   \e[30m\e[1m│\e[0m  • React Library              \e[30m\e[1m│\e[0m      └ Erlang \e[30m\e[1m[\e[0m${ERL_S}\e[30m\e[1m]\e[0m ${ERL_V}
-${TIMELINE_STEP}                          \e[30m\e[1m│\e[0m  • GraphQL Query Language     \e[30m\e[1m│\e[0m  NPM          \e[30m\e[1m[\e[0m${NPM_S}\e[30m\e[1m]\e[0m ${NPM_V}
-${TIMELINE_STEP}                          \e[30m\e[1m│\e[0m                               \e[30m\e[1m│\e[0m   └ Node.js   \e[30m\e[1m[\e[0m${NODE_S}\e[30m\e[1m]\e[0m ${NODE_V}"
+${TIMELINE_STEP}                          \e[30m\e[1m│\e[0m  \e[1mStack de tecnologías del proyecto:\e[0m  \e[30m\e[1m│\e[0m  \e[1mSoftware instalado requerido:\e[0m
+${TIMELINE_STEP} \e[1m██▄███▄ ██▌ ▐██ ██▌ ▐██\e[0m  \e[30m\e[1m│\e[0m                                      \e[30m\e[1m│\e[0m 
+${TIMELINE_STEP} \e[1m██▌ ▐██ ██▌ ▐██ ██▌ ▐██\e[0m  \e[30m\e[1m│\e[0m  • Framework Phoenix                 \e[30m\e[1m│\e[0m  Phoenix      \e[30m\e[1m[\e[0m${PHX_S}\e[30m\e[1m]\e[0m ${PHX_V}
+${TIMELINE_STEP} \e[1m██▌ ▐███▀███▀██ ▀███▀██\e[0m  \e[30m\e[1m│\e[0m  • Empaquetador de módulos Webpack   \e[30m\e[1m│\e[0m   └ Elixir    \e[30m\e[1m[\e[0m${EX_S}\e[30m\e[1m]\e[0m ${EX_V}
+${TIMELINE_STEP}  NUU Group Engineering   \e[30m\e[1m│\e[0m  • Librería React                    \e[30m\e[1m│\e[0m      └ Erlang \e[30m\e[1m[\e[0m${ERL_S}\e[30m\e[1m]\e[0m ${ERL_V}
+${TIMELINE_STEP}                          \e[30m\e[1m│\e[0m  • Lenguaje de Consultas GraphQL     \e[30m\e[1m│\e[0m  NPM          \e[30m\e[1m[\e[0m${NPM_S}\e[30m\e[1m]\e[0m ${NPM_V}
+${TIMELINE_STEP}                          \e[30m\e[1m│\e[0m                                      \e[30m\e[1m│\e[0m   └ Node.js   \e[30m\e[1m[\e[0m${NODE_S}\e[30m\e[1m]\e[0m ${NODE_V}"
 }
 function terminate_script () {
   printf "\e[?25h\n"
@@ -178,20 +178,20 @@ do
       exit 0
     elif [ "${1}" = "--path" ]; then
       if [ "${2:0:2}" = "--" ] || [ "${2:0:1}" = "-" ] || [ "${2}" = "" ]; then
-        display_message arg_error "The \e[1m${1}\e[0m option require 1 argument"
+        display_message arg_error "La opción \e[1m${1}\e[0m requiere 1 argumento"
         exit 1
       fi
       shift
       TARGET_PATH=${1}
     elif [ "${1}" = "--module" ]; then
       if [ "${2:0:2}" = "--" ] || [ "${2:0:1}" = "-" ] || [ "${2}" = "" ]; then
-        display_message arg_error "The \e[1m${1}\e[0m option require 1 argument"
+        display_message arg_error "La opción \e[1m${1}\e[0m requiere 1 argumento"
         exit 1
       fi
       shift
       MODULE="$(tr '[:lower:]' '[:upper:]' <<< ${1:0:1})${1:1}"
     else
-      display_message arg_error "The \e[1m${1}\e[0m option does not exists"
+      display_message arg_error "La opción \e[1m${1}\e[0m no existe"
       exit 1
     fi
   elif [ "${1:0:1}" = "-" ]; then
@@ -200,20 +200,20 @@ do
       exit 0
     elif [ "${1}" = "-p" ]; then
       if [ "${2:0:2}" = "--" ] || [ "${2:0:1}" = "-" ] || [ "${2}" = "" ]; then
-        display_message arg_error "The \e[1m${1}\e[0m option require 1 argument"
+        display_message arg_error "La opción \e[1m${1}\e[0m requiere 1 argumento"
         exit 1
       fi
       shift
       TARGET_PATH=${1}
     elif [ "${1}" = "-m" ]; then
       if [ "${2:0:2}" = "--" ] || [ "${2:0:1}" = "-" ] || [ "${2}" = "" ]; then
-        display_message arg_error "The \e[1m${1}\e[0m option require 1 argument"
+        display_message arg_error "La opción \e[1m${1}\e[0m requiere 1 argumento"
         exit 1
       fi
       shift
       MODULE="$(tr '[:lower:]' '[:upper:]' <<< ${1:0:1})${1:1}"
     else
-      display_message arg_error "The \e[1m${1}\e[0m option does not exists"
+      display_message arg_error "La opción \e[1m${1}\e[0m no existe"
       exit 1
     fi
   else
@@ -241,79 +241,79 @@ fi
 function validations () {
   # Se checa que las tecnologías necesarias estén todas instaladas
   if [ "${PHX_V}" = "" ] || [ "${NPM_V}" = "" ] || [ "${EX_V}" = "" ] || [ "${NODE_V}" = "" ]; then
-    display_message error "One of the technologies needed to create the project is not installed correctly"
+    display_message error "Una de las tecnologías necesarias para crear el proyecto no está instalada correctamente"
     terminate_script
     exit 1
   fi
   # Se checa que se haya introducido el primer argumento que es el título
   if [ -z "${PROJECT_NAME}" ]; then
-    display_message error "Its needed to specify the name of the project:" "Run the script with option \e[1m--help\e[0m for more information"
+    display_message error "Falta especificar el nombre del proyecto:" "Ejecuta el script con la opción \e[1m--help\e[0m para más información"
     terminate_script
     exit 1
   fi
   # Se checa que la ruta dada exista
   if [ ! -d "${TARGET_PATH}" ]; then
-    display_message error "The path where the project will be created does not exist"
+    display_message error "La ruta donde se creará el proyecto no existe"
     terminate_script
     exit 1
   fi
   # Se checa si ya existe un directorio con el nombre de proyecto
   cd "${TARGET_PATH}" &>/dev/null
   if [ -d "${PROJECT_NAME}" ]; then
-    display_message error "A directory \"${PROJECT_NAME}\" already exists:" "Select another project name for installation"
+    display_message error "Ya existe un directorio \"${PROJECT_NAME}\":" "Selecciona otro directorio para la instalación"
     terminate_script
     exit 1
   fi
 }
 function task1 () {
-  display_message task "Creating Phoenix project "
+  display_message task "Creando proyecto Phoenix "
   {
   #--- 1 ---
     echo y | mix phx.new "${PROJECT_NAME}" --module "${MODULE}" &>/dev/null
-    catch_error $? "The Phoenix project could not be created correctly"
+    catch_error $? "No se pudo crear el proyecto de Phoenix correctamente"
   } & spinner
 }
 function task2 () {
-  display_message task "Uninstalling Brunch and relative dependencies "
+  display_message task "Desinstalando Brunch y dependencias relativas "
   {
   #--- 2 ---
     cd "${PROJECT_NAME}/assets" &>/dev/null
-    catch_error $? "The \"${PROJECT_NAME}/assets\" directory could not be accessed"
+    catch_error $? "No se pudo acceder al directorio \"${PROJECT_NAME}/assets\""
   #--- 3 ---
     if [ "${KERNEL}" = "Darwin" ]; then 
       sed -i "" $'s/{},/{},\\\n  "description": " ",/g' package.json &>/dev/null
     else 
       sed -i $'s/{},/{},\\\n  "description": " ",/g' package.json &>/dev/null
     fi
-    catch_error $? "Unable to add description to \"package.json\" file"
+    catch_error $? "No se pudo agregar descripción al archivo \"package.json\""
   #--- 4 ---
     npm uninstall --save-dev brunch babel-brunch clean-css-brunch uglify-js-brunch &>/dev/null
-    catch_error $? "The uninstallation via NPM could not be executed correctly"
+    catch_error $? "No se pudo ejecutar la desinstalación vía NPM correctamente"
   #--- 5 ---
     rm brunch-config.js &>/dev/null
-    catch_error $? "The \"${PROJECT_NAME}/assets/brunch-config.js\" file could not be deleted"
+    catch_error $? "No se pudo eliminar el archivo \"${PROJECT_NAME}/assets/brunch-config.js\""
   } & spinner
 }
 function task3 () {
-  display_message task "Installing Webpack, React, GraphQL and other dependencies "
+  display_message task "Instalando Webpack, React, GraphQL y otras dependencias "
   {
   #--- 6 ---
     cd "${PROJECT_NAME}/assets" &>/dev/null
-    catch_error $? "The \"${PROJECT_NAME}/assets\" directory could not be accessed"
+    catch_error $? "No se pudo acceder al directorio \"${PROJECT_NAME}/assets\""
   #--- 7 ---
     npm install --save-dev webpack webpack-cli copy-webpack-plugin uglifyjs-webpack-plugin graphql react react-dom react-router-dom prop-types @babel/core @babel/cli @babel/preset-env @babel/preset-react @babel/plugin-proposal-class-properties babel-loader css-loader url-loader file-loader mini-css-extract-plugin optimize-css-assets-webpack-plugin &>/dev/null
-    catch_error $? "The installation via NPM could not be executed correctly"
+    catch_error $? "No se pudo ejecutar la instalación vía NPM correctamente"
   } & spinner
 }
 function task4 () {
-  display_message task "Configuring dependencies and project file structure "
+  display_message task "Configurando dependencias y estructura de archivos del proyecto "
   {
   #--- 8 ---
     cd "${PROJECT_NAME}/assets" &>/dev/null
-    catch_error $? "The \"${PROJECT_NAME}/assets\" directory could not be accessed"
+    catch_error $? "No se pudo acceder al directorio \"${PROJECT_NAME}/assets\""
   #--- 9 ---
     touch webpack.config.js &>/dev/null
-    catch_error $? "The \"${PROJECT_NAME}/assets/webpack.config.js\" file could not be created"
+    catch_error $? "No se pudo crear el archivo \"${PROJECT_NAME}/assets/webpack.config.js\""
   #--- 10 ---
     cat &>/dev/null <<EOM >"webpack.config.js"
 const path = require('path');
@@ -373,37 +373,37 @@ module.exports = (env, options) => ({
   ]
 });
 EOM
-    catch_error $? "Unable to add content to \"${PROJECT_NAME}/assets/webpack.config.js\" file"
+    catch_error $? "No se pudo agregar el contenido al archivo \"${PROJECT_NAME}/assets/webpack.config.js\""
   #--- 11 ---
     if [ "${KERNEL}" = "Darwin" ]; then
       sed -i "" $'s/"deploy": "brunch build --production"/"deploy": "webpack --mode production"/g' package.json &>/dev/null
     else
       sed -i $'s/"deploy": "brunch build --production"/"deploy": "webpack --mode production"/g' package.json &>/dev/null
     fi
-    catch_error $? "Unable to replace script \"deploy\" in \"${PROJECT_NAME}/assets/package.json\" file"
+    catch_error $? "No se pudo reemplazar el script \"deploy\" en \"${PROJECT_NAME}/assets/package.json\""
   #--- 12 ---
     if [ "${KERNEL}" = "Darwin" ]; then
       sed -i "" $'s/"watch": "brunch watch --stdin"/"start": "webpack --mode development --watch-stdin --color"/g' package.json &>/dev/null
     else
       sed -i $'s/"watch": "brunch watch --stdin"/"start": "webpack --mode development --watch-stdin --color"/g' package.json &>/dev/null
     fi
-    catch_error $? "Unable to replace script \"watch\" in \"${PROJECT_NAME}/assets/package.json\" file"
+    catch_error $? "No se pudo reemplazar el script \"watch\" en \"${PROJECT_NAME}/assets/package.json\""
   #--- 13 ---
     cd ../config &>/dev/null
-    catch_error $? "The \"${PROJECT_NAME}/config\" directory could not be accessed"
+    catch_error $? "No se pudo acceder al directorio \"${PROJECT_NAME}/config\""
   #--- 14 ---
     if [ "${KERNEL}" = "Darwin" ]; then
       sed -i "" $'s|watchers: \[node: \["node_modules/brunch/bin/brunch", "watch", "--stdin",|watchers: \[node: \["node_modules/webpack/bin/webpack.js", "--mode", "development", "--watch-stdin", "--color",|g' dev.exs &>/dev/null
     else
       sed -i $'s|watchers: \[node: \["node_modules/brunch/bin/brunch", "watch", "--stdin",|watchers: \[node: \["node_modules/webpack/bin/webpack.js", "--mode", "development", "--watch-stdin", "--color",|g' dev.exs &>/dev/null
     fi
-    catch_error $? "Unable to replace script \"watchers\" in \"${PROJECT_NAME}/config/dev.exs\" file"
+    catch_error $? "No se pudo reemplazar el script \"watchers\" en \"${PROJECT_NAME}/config/dev.exs\""
   #--- 15 ---
     cd ../assets &>/dev/null
-    catch_error $? "The \"$PROJECT_NAME/assets\" directory could not be accessed"
+    catch_error $? "No se pudo acceder al directorio \"$PROJECT_NAME/assets\""
   #--- 16 ---
     touch .babelrc &>/dev/null
-    catch_error $? "Unable to create \"${PROJECT_NAME}/assets/.babelrc\" file"
+    catch_error $? "No se pudo crear el archivo \"${PROJECT_NAME}/assets/.babelrc\""
   #--- 17 ---
     cat &>/dev/null <<EOM >".babelrc"
 {
@@ -416,13 +416,13 @@ EOM
   ]
 }
 EOM
-    catch_error $? "Unable to add content to \"${PROJECT_NAME}/assets/.babelrc\" file"
+    catch_error $? "No se pudo agregar el contenido al archivo \"${PROJECT_NAME}/assets/.babelrc\""
   #--- 18 ---
     cd js &>/dev/null
-    catch_error $? "The \"${PROJECT_NAME}/assets/js\" directory could not be accessed"
+    catch_error $? "No se pudo acceder al directorio \"${PROJECT_NAME}/assets/js\""
   #--- 19 ---
     touch index.js
-    catch_error $? "Unable to create \"${PROJECT_NAME}/assets/js/index.js\" file"
+    catch_error $? "No se pudo crear el archivo \"${PROJECT_NAME}/assets/js/index.js\""
   #--- 20 ---
     cat &>/dev/null <<EOM >"index.js"
 // Dependencies
@@ -432,7 +432,7 @@ import ReactDOM from 'react-dom';
 class App extends Component {
   render() {
     return (
-      <div>Configuration was successful!</div>
+      <div>¡La configuración fue exitosa!</div>
     );
   }
 }
@@ -442,16 +442,16 @@ ReactDOM.render(
   document.getElementById('root')
 );
 EOM
-    catch_error $? "Unable to add content to \"${PROJECT_NAME}/assets/js/index.js\" file"
+    catch_error $? "No se pudo agregar el contenido al archivo \"${PROJECT_NAME}/assets/js/index.js\""
     #--- 21 ---
       mkdir components &>/dev/null
-      catch_error $? "Unable to create \"${PROJECT_NAME}/assets/js/components\" directory"
+      catch_error $? "No se pudo crear el directorio \"${PROJECT_NAME}/assets/js/components\""
     #--- 22 ---
       mkdir pages &>/dev/null
-      catch_error $? "Unable to create \"${PROJECT_NAME}/assets/js/pages\" directory"
+      catch_error $? "No se pudo crear el directorio \"${PROJECT_NAME}/assets/js/pages\""
     #--- 23 ---
       mkdir data &>/dev/null
-      catch_error $? "Unable to create \"${PROJECT_NAME}/assets/js/data\" directory"
+      catch_error $? "No se pudo crear el directorio \"${PROJECT_NAME}/assets/js/data\""
     #--- 24 ---
       if [ "$KERNEL" = "Darwin" ]; then
         sed -i "" $'/"phoenix_html"/a \
@@ -459,17 +459,17 @@ EOM
       else
         sed -i $'/"phoenix_html"/a \import css from "..\/css\/app.css"\\\nimport { index } from ".\/index"\\\n' app.js &>/dev/null
       fi
-      catch_error $? "Could not add the imports in \"${PROJECT_NAME}/assets/js/app.js\" file"
+      catch_error $? "No se pudieron agregar los imports en \"${PROJECT_NAME}/assets/js/app.js\""
     #--- 25 ---
       cd ../../lib/"${PROJECT_NAME}"_web/templates/layout &>/dev/null
-      catch_error $? "The \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/layout\" directory could not be accessed"
+      catch_error $? "No se pudo acceder al directorio \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/layout\""
     #--- 26 ---
       if [ "${KERNEL}" = "Darwin" ]; then
         sed -i "" $'/<body>/,/<\/body>/d' app.html.eex &>/dev/null
       else
         sed -i $'/<body>/,/<\/body>/d' app.html.eex &>/dev/null
       fi
-      catch_error $? "Could not replace the code in \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/layout/app.html.eex\" file"
+      catch_error $? "No se pudo reemplazar el código en \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/layout/app.html.eex\""
       if [ "${KERNEL}" = "Darwin" ]; then
         sed -i "" $'/<\/head>/a \
         \\\n  <body>\\\n    <main role="main">\\\n      <%= render @view_module, @view_template, assigns %>\\\n    <\/main>\\\n    <script src="<%= static_path(@conn, "\/js\/app.js") %>"><\/script>\\\n  <\/body>' app.html.eex &>/dev/null
@@ -477,16 +477,16 @@ EOM
         sed -i $'/<\/head>/a \
         \\\n  <body>\\\n    <main role="main">\\\n      <%= render @view_module, @view_template, assigns %>\\\n    <\/main>\\\n    <script src="<%= static_path(@conn, "\/js\/app.js") %>"><\/script>\\\n  <\/body>' app.html.eex &>/dev/null
       fi
-      catch_error $? "Could not replace the code in \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/layout/app.html.eex\" file"
+      catch_error $? "No se pudo reemplazar el código en \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/layout/app.html.eex\""
     #--- 27 ---
       cd ../page &>/dev/null
-      catch_error $? "The \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/page\" directory could not be accessed"
+      catch_error $? "No se pudo acceder al directorio \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/page\""
     #--- 28 ---
       echo "<div id=\"root\"></div>" > "index.html.eex" # &>/dev/null
-      catch_error $? "Could not replace the code in \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/page/index.html.eex\" file"
+      catch_error $? "No se pudo reemplazar el código en \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/page/index.html.eex\""
     #--- 29 ---
       cd ../.. &>/dev/null
-      catch_error $? "The \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web\" directory could not be accessed"
+      catch_error $? "No se pudo acceder al directorio \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web\""
     #--- 30 ---
       if [ "${KERNEL}" = "Darwin" ]; then
         sed -i "" $'/^\(end\)/i \
@@ -495,28 +495,28 @@ EOM
         sed -i $'/^\(end\)/i \
         \\\n  if Mix.env == :dev do\\\n    forward \"/graphiql\", Absinthe.Plug.GraphiQL,\\\n      schema: '"${MODULE}"$'.Graphql.Schema,\\\n      interface: :advanced,\\\n      context: %{pubsub: '"${MODULE}"$'.Endpoint}\\\n  end\\\n' router.ex &>/dev/null
       fi
-      catch_error $? "Could not add the code in \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/router.ex\" file"
+      catch_error $? "No se pudo agregar código en \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/router.ex\""
     #--- 31 ---
       cd ../"${PROJECT_NAME}" &>/dev/null
-      catch_error $? "The \"${PROJECT_NAME}/lib/${PROJECT_NAME}\" directory could not be accessed"
+      catch_error $? "No se pudo acceder al directorio \"${PROJECT_NAME}/lib/${PROJECT_NAME}\""
     #--- 32 ---
       mkdir graphql &>/dev/null
-      catch_error $? "Unable to create \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql\" directory"
+      catch_error $? "No se pudo crear el directorio \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql\""
     #--- 33 ---
       cd graphql &>/dev/null
-      catch_error $? "The \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql\" directory could not be accessed"
+      catch_error $? "No se pudo acceder al directorio \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql\""
     #--- 34 ---
       touch queries.ex &>/dev/null
-      catch_error $? "Unable to create \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/queries.ex\" file"
+      catch_error $? "No se pudo crear el archivo \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/queries.ex\""
     #--- 35 ---
       touch mutations.ex &>/dev/null
-      catch_error $? "Unable to create \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/mutations.ex\" file"
+      catch_error $? "No se pudo crear el archivo \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/mutations.ex\""
     #--- 36 ---
       touch subscriptions.ex &>/dev/null
-      catch_error $? "Unable to create \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/subscriptions.ex\" file"
+      catch_error $? "No se pudo crear el archivo \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/subscriptions.ex\""
     #--- 37 ---
       touch schema.ex &>/dev/null
-      catch_error $? "Unable to create \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/schema.ex\" file"
+      catch_error $? "No se pudo crear el archivo \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/schema.ex\""
     #--- 38 ---
       cat &>/dev/null <<EOM >"queries.ex"
 defmodule $MODULE.Graphql.Queries do
@@ -528,7 +528,7 @@ defmodule $MODULE.Graphql.Queries do
   end
 end
 EOM
-      catch_error $? "Unable to add content to \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/queries.ex\" file"
+      catch_error $? "No se pudo agregar el contenido al archivo \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/queries.ex\""
     #--- 39 ---
       cat &>/dev/null <<EOM >"mutations.ex"
 defmodule $MODULE.Graphql.Mutations do
@@ -540,7 +540,7 @@ defmodule $MODULE.Graphql.Mutations do
   end
 end
 EOM
-      catch_error $? "Unable to add content to \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/mutations.ex\" file"
+      catch_error $? "No se pudo agregar el contenido al archivo \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/mutations.ex\""
     #--- 40 ---
       cat &>/dev/null <<EOM >"subscriptions.ex"
 defmodule $MODULE.Graphql.Subscriptions do
@@ -552,7 +552,7 @@ defmodule $MODULE.Graphql.Subscriptions do
   end
 end
 EOM
-      catch_error $? "Unable to add content to \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/subscriptions.ex\" file"
+      catch_error $? "No se pudo agregar el contenido al archivo \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/subscriptions.ex\""
     #--- 41 ---
       cat &>/dev/null <<EOM >"schema.ex"
 defmodule $MODULE.Graphql.Schema do
@@ -571,28 +571,28 @@ defmodule $MODULE.Graphql.Schema do
   subscription [], do: import_fields :subscriptions
 end
 EOM
-      catch_error $? "Unable to add content to \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/schema.ex\" file"
+      catch_error $? "No se pudo agregar el contenido al archivo \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/schema.ex\""
   } & spinner
 }
 function task5 () {
-  display_message task "Compiling dependencies for Phoenix "
+  display_message task "Compilando dependencias para Phoenix "
   {
   #--- 42 ---
     cd "${PROJECT_NAME}" &>/dev/null
-    catch_error $? "The \"${PROJECT_NAME}\" directory could not be accessed"
+    catch_error $? "No se pudo acceder al directorio \"${PROJECT_NAME}\""
   #--- 43 ---
     if [ "${KERNEL}" = "Darwin" ]; then
       sed -E -i "" $'s/{:cowboy, "~> [0-9]+\.[0-9]+"}/{:plug_cowboy, "~> 1.0"},\\\n      {:absinthe, "~> 1.4.13"},\\\n      {:absinthe_ecto, "~> 0.1.3"},\\\n      {:absinthe_plug, "~> 1.4.6"},\\\n      {:absinthe_phoenix, "~> 1.4.3"}/' mix.exs &>/dev/null
     else
       sed -i $'s/{:cowboy, "~> [0-9][0-9]*\.[0-9][0-9]*"}/{:plug_cowboy, "~> 1.0"},\\\n      {:absinthe, "~> 1.4.13"},\\\n      {:absinthe_ecto, "~> 0.1.3"},\\\n      {:absinthe_plug, "~> 1.4.6"},\\\n      {:absinthe_phoenix, "~> 1.4.3"}/' mix.exs &>/dev/null
     fi
-    catch_error $? "The dependencies could not be modified in \"${PROJECT_NAME}/mix.exs\" file"
+    catch_error $? "No se pudo modificar las dependencias en el archivo \"${PROJECT_NAME}/mix.exs\""
   #--- 44 ---
     mix deps.get &>/dev/null
-    catch_error $? "Unable to download dependencies for Phoenix"
+    catch_error $? "No se pudieron descargar las dependencias para Phoenix"
   #--- 45 ---
     mix deps.compile &>/dev/null
-    catch_error $? "Unable to compile dependencies for Phoenix"
+    catch_error $? "No se pudieron compilar las dependencias para Phoenix"
   } & spinner
 }
 
@@ -670,22 +670,22 @@ task4
 task5
 # ------------------------------------------------------------------------------
 step
-display_message green "The project has been created and configured correctly!"
+display_message green "¡Se ha creado y configurado correctamente el proyecto!"
 printf "
 
- Go into your application by running:
+ Ve al directorio de tu aplicación ejecutando:
  
    \e[1m$ cd ${TARGET_PATH}${PROJECT_NAME}\e[0m
  
- Then configure your database in config/dev.exs and run:
+ Después configura tu base de datos en config/dev.exs y corre:
  
    \e[1m$ mix ecto.create\e[0m
  
- Start your Phoenix app with:
+ Inicia tu aplicación de Phoenix con:
  
    \e[1m$ mix phx.server\e[0m
  
- You can also run your app inside IEx (Interactive Elixir) as:
+ También se puede correr la aplicación dentro de IEx (Elixir Interactivo) con:
  
    \e[1m$ iex -S mix phx.server\e[0m
 "

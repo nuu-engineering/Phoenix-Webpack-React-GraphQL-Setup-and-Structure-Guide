@@ -1,6 +1,6 @@
 # -*- ENCODING: UTF-8 -*-
 #!/bin/bash
-VERSION="v1.0.3"
+VERSION="v1.0.4"
 trap terminate_script SIGINT
 
 # Variables ====================================================================
@@ -62,7 +62,7 @@ function display_message () {
   if [ "${TYPE}" = "error" ]; then
     printf "\n${MESSAGE_STEP}\e[1m\e[31m${TITLE}\e[0m${MESSAGE}"
   elif [ "${TYPE}" = "arg_error" ]; then
-    printf "${MESSAGE_STEP}\e[1m\e[31m${TITLE}\e[0m${MESSAGE}"
+    printf "${MESSAGE_STEP}\e[1m\e[31m${TITLE}\e[0m${MESSAGE}\n"
   elif [ "${TYPE}" = "green" ]; then
     printf "\n${MESSAGE_STEP}\e[1m\e[32m${TITLE}\e[0m${MESSAGE}"
   elif [ "${TYPE}" = "warning" ]; then
@@ -132,40 +132,46 @@ function catch_error () {
   fi
 }
 function display_help () {
-  printf " \e[34m▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄\e[0m\b
- \e[1m\e[44m  NUU Group: S1 Project Setup Script                    \e[0m\b
+  printf "
+                                  \e[1m██▄███▄ ██▌ ▐██ ██▌ ▐██\e[0m
+                                  \e[1m██▌ ▐██ ██▌ ▐██ ██▌ ▐██\e[0m
+                                  \e[1m██▌ ▐███▀███▀██ ▀███▀██\e[0m
+                                   NUU Group Engineering
+ \e[34m▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄\e[0m\b
+ \e[1m\e[44m  S1 Project Setup Script                       ${VERSION}  \e[0m\b
  \e[34m▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀\e[0m\b
  Tool for creation and initial configuration for projects
  that are built with the following technologies stack:
 
- \e[1m•\e[0m Phoenix Framework
- \e[1m•\e[0m Webpack Module Bundler
- \e[1m•\e[0m React Library
- \e[1m•\e[0m GraphQL Query Language
+ • Phoenix Framework
+ • Webpack Module Bundler
+ • React Library
+ • GraphQL Query Language
 
- \e[1mVersion: \e[0m\b ${VERSION}
- \e[1mLanguage: \e[0m\b English
+ \e[1mLanguage: \e[0m
+   English
 
  \e[1mUsage:\e[0m\b
    ${0} [\e[33mapplication_name \e[0m\b]
 
  \e[1mOptions:\e[0m\b
    -h --help
-   -p --path [\e[33mtarget_path \e[0m\b]
-   -m --module [\e[33mbase_module \e[0m\b]\n"
+      --path [\e[33mruta_destino \e[0m\b]
+      --module [\e[33mmódulo_base \e[0m\b]
+      --database [\e[36m\e[1mpostgres\e[35m|\e[36mmysql\e[35m|\e[36mmssql \e[0m\b]\n"
 }
 function display_header () {
   printf "
-${TIMELINE_STEP}                          \e[30m\e[1m│\e[0m  \e[1mProject technologies stack:\e[0m  \e[30m\e[1m│\e[0m  \e[1mRequired installed software:\e[0m
-${TIMELINE_STEP} \e[1m██▄███▄ ██▌ ▐██ ██▌ ▐██\e[0m  \e[30m\e[1m│\e[0m                               \e[30m\e[1m│\e[0m 
-${TIMELINE_STEP} \e[1m██▌ ▐██ ██▌ ▐██ ██▌ ▐██\e[0m  \e[30m\e[1m│\e[0m  • Phoenix Framework          \e[30m\e[1m│\e[0m  Phoenix      \e[30m\e[1m[\e[0m${PHX_S}\e[30m\e[1m]\e[0m ${PHX_V}
-${TIMELINE_STEP} \e[1m██▌ ▐███▀███▀██ ▀███▀██\e[0m  \e[30m\e[1m│\e[0m  • Webpack Module Bundler     \e[30m\e[1m│\e[0m   └ Elixir    \e[30m\e[1m[\e[0m${EX_S}\e[30m\e[1m]\e[0m ${EX_V}
-${TIMELINE_STEP}  NUU Group Engineering   \e[30m\e[1m│\e[0m  • React Library              \e[30m\e[1m│\e[0m      └ Erlang \e[30m\e[1m[\e[0m${ERL_S}\e[30m\e[1m]\e[0m ${ERL_V}
-${TIMELINE_STEP}                          \e[30m\e[1m│\e[0m  • GraphQL Query Language     \e[30m\e[1m│\e[0m  NPM          \e[30m\e[1m[\e[0m${NPM_S}\e[30m\e[1m]\e[0m ${NPM_V}
-${TIMELINE_STEP}                          \e[30m\e[1m│\e[0m                               \e[30m\e[1m│\e[0m   └ Node.js   \e[30m\e[1m[\e[0m${NODE_S}\e[30m\e[1m]\e[0m ${NODE_V}"
+${TIMELINE_STEP} \e[1mProject technologies stack:\e[0m  \e[30m\e[1m│\e[0m  \e[1mRequired installed software:\e[0m
+${TIMELINE_STEP}                              \e[30m\e[1m│\e[0m 
+${TIMELINE_STEP} • Phoenix Framework          \e[30m\e[1m│\e[0m  Phoenix      \e[30m\e[1m[\e[0m${PHX_S}\e[30m\e[1m]\e[0m ${PHX_V}
+${TIMELINE_STEP} • Webpack Module Bundler     \e[30m\e[1m│\e[0m   └ Elixir    \e[30m\e[1m[\e[0m${EX_S}\e[30m\e[1m]\e[0m ${EX_V}
+${TIMELINE_STEP} • React Library              \e[30m\e[1m│\e[0m      └ Erlang \e[30m\e[1m[\e[0m${ERL_S}\e[30m\e[1m]\e[0m ${ERL_V}
+${TIMELINE_STEP} • GraphQL Query Language     \e[30m\e[1m│\e[0m  NPM          \e[30m\e[1m[\e[0m${NPM_S}\e[30m\e[1m]\e[0m ${NPM_V}
+${TIMELINE_STEP}                              \e[30m\e[1m│\e[0m   └ Node.js   \e[30m\e[1m[\e[0m${NODE_S}\e[30m\e[1m]\e[0m ${NODE_V}"
 }
 function terminate_script () {
-  printf "\e[?25h\n"
+  printf "\e[0m\e[?25h\n"
   kill -s TERM "${SCRIPT_PID}"
   exit 1
 }
@@ -190,6 +196,17 @@ do
       fi
       shift
       MODULE="$(tr '[:lower:]' '[:upper:]' <<< ${1:0:1})${1:1}"
+    elif [ "${1}" = "--database" ]; then
+      if [ "${2}" = "postgres" ] || [ "${2}" = "mysql" ] || [ "${2}" = "mssql" ]; then
+        shift
+        DATABASE=${1}
+      elif [ "${2}" = "" ]; then
+        display_message arg_error "The \e[1m${1}\e[0m option require 1 argument"
+        exit 1
+      else
+        display_message arg_error "Database not supported" "(Run the script with option \e[1m--help\e[0m for more information)"
+        exit 1
+      fi
     else
       display_message arg_error "The \e[1m${1}\e[0m option does not exists"
       exit 1
@@ -198,20 +215,6 @@ do
     if [ "${1}" = "-h" ]; then 
       display_help
       exit 0
-    elif [ "${1}" = "-p" ]; then
-      if [ "${2:0:2}" = "--" ] || [ "${2:0:1}" = "-" ] || [ "${2}" = "" ]; then
-        display_message arg_error "The \e[1m${1}\e[0m option require 1 argument"
-        exit 1
-      fi
-      shift
-      TARGET_PATH=${1}
-    elif [ "${1}" = "-m" ]; then
-      if [ "${2:0:2}" = "--" ] || [ "${2:0:1}" = "-" ] || [ "${2}" = "" ]; then
-        display_message arg_error "The \e[1m${1}\e[0m option require 1 argument"
-        exit 1
-      fi
-      shift
-      MODULE="$(tr '[:lower:]' '[:upper:]' <<< ${1:0:1})${1:1}"
     else
       display_message arg_error "The \e[1m${1}\e[0m option does not exists"
       exit 1
@@ -223,8 +226,8 @@ do
     let ARGS_COUNT++
   fi
   shift
-done 
-# Argumentos default
+done
+# Argumentos default ----------------------------------------------------------
 if [ -z "${MODULE}" ]; then
   IFS='_'; a=(${PROJECT_NAME}); unset IFS;
   for VAR in "${a[@]}"
@@ -237,6 +240,23 @@ if [ -z "${TARGET_PATH}" ]; then
 elif [ "${TARGET_PATH: -1}" != "/" ] && [ "${TARGET_PATH: -1}" != "\\" ]; then
   TARGET_PATH="${TARGET_PATH}/"
 fi
+if [ -z "${DATABASE}" ]; then
+  DATABASE="postgres"
+fi
+# Validaciones de argumentos -------------------------------------------------
+if [ -z "${PROJECT_NAME}" ]; then
+  display_message arg_error "Its needed to specify the name of the project" "(Run the script with option \e[1m--help\e[0m for more information)"
+  exit 1
+fi
+if [ ! -d "${TARGET_PATH}" ]; then
+  display_message arg_error "The path where the project will be created does not exist"
+  exit 1
+fi
+cd ${TARGET_PATH}
+if [ -d "${PROJECT_NAME}" ]; then
+  display_message arg_error "The directory \"${TARGET_PATH}${PROJECT_NAME}\" already exists:" "Select another project name for installation"
+  exit 1
+fi
 # Funciones de proceso -------------------------------------------------------
 function validations () {
   # Se checa que las tecnologías necesarias estén todas instaladas
@@ -245,31 +265,12 @@ function validations () {
     terminate_script
     exit 1
   fi
-  # Se checa que se haya introducido el primer argumento que es el título
-  if [ -z "${PROJECT_NAME}" ]; then
-    display_message error "Its needed to specify the name of the project:" "Run the script with option \e[1m--help\e[0m for more information"
-    terminate_script
-    exit 1
-  fi
-  # Se checa que la ruta dada exista
-  if [ ! -d "${TARGET_PATH}" ]; then
-    display_message error "The path where the project will be created does not exist"
-    terminate_script
-    exit 1
-  fi
-  # Se checa si ya existe un directorio con el nombre de proyecto
-  cd "${TARGET_PATH}" &>/dev/null
-  if [ -d "${PROJECT_NAME}" ]; then
-    display_message error "A directory \"${PROJECT_NAME}\" already exists:" "Select another project name for installation"
-    terminate_script
-    exit 1
-  fi
 }
 function task1 () {
   display_message task "Creating Phoenix project "
   {
   #--- 1 ---
-    echo y | mix phx.new "${PROJECT_NAME}" --module "${MODULE}" &>/dev/null
+    echo y | mix phx.new "${PROJECT_NAME}" --module "${MODULE}" --database "${DATABASE}" &>/dev/null
     catch_error $? "The Phoenix project could not be created correctly"
   } & spinner
 }
@@ -668,6 +669,7 @@ task2
 task3
 task4
 task5
+
 # ------------------------------------------------------------------------------
 step
 display_message green "The project has been created and configured correctly!"

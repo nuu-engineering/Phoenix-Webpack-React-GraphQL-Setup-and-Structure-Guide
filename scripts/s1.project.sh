@@ -1,12 +1,14 @@
 # -*- ENCODING: UTF-8 -*-
 #!/bin/bash
-VERSION="v1.0.4"
+VERSION="v1.0.5"
 trap terminate_script SIGINT
 
 # Variables ====================================================================
 PROJECT_NAME=""
 MODULE=""
 TARGET_PATH=""
+DATABASE=""
+CREDENTIALS="false"
 # Variables de control -------------------------------------------------------
 SCRIPT_PID=$$
 KERNEL=$(uname -s)
@@ -23,7 +25,7 @@ CANCEL_SYMBOL="\e[31m\e[1m✖\e[0m"
 # Funciones de Control -------------------------------------------------------
 
 function display_message () {
-  local TYPE=$1
+  local TYPE=${1}
   local ARGS_COUNT=0
   if [ "${TYPE}" = "error" ]; then
     local MESSAGE_STEP="\e[31m${TIMELINE_L_MARGIN}${TIMELINE_END_SYMBOL}${TIMELINE_R_MARGIN}\e[0m"
@@ -39,7 +41,8 @@ function display_message () {
     local TITLE=" Warning: "
   elif [ "${TYPE}" = "blue" ]; then
     local MESSAGE_STEP="\e[0m${TIMELINE_STEP}"
-    local TITLE=" Input: "
+    local TITLE=" ${2}:"
+    shift
   elif [ "${TYPE}" = "task" ]; then
     local MESSAGE_STEP="\e[0m${TIMELINE_STEP}"
     let TASK_COUNT++
@@ -82,6 +85,12 @@ function open_input () {
 function close_input () {
   printf "\033[1A\e[0m\e[?25l"
 }
+function display_pass () {
+  for ((i=1; i<=${#1}; i++)); do
+    local PASS="${PASS}·"
+  done
+  printf "${PASS}\n"
+}
 function spinner () {
   local GROUP_PID=$!
   local DELAY=0.05
@@ -94,7 +103,7 @@ function spinner () {
   SP[5]="⠸"
   SP[6]="⠙"
   SP[7]="⠋"
-  printf "\e[30m\e[1m\r${TIMELINE_L_MARGIN}\b[ ]\e[0m\b"
+  display_spinner_box
   if [ "${KERNEL}" = "Darwin" ]; then
     # "^\s*(^|\W)${GROUP_PID}($|\W)"
     while [ $(ps ax | grep -w -E "^\s*${GROUP_PID}" | wc -l) != "0" ]; do
@@ -110,12 +119,22 @@ function spinner () {
   fi
   clear_spinner ok
 }
+function display_spinner_box () {
+  printf "\e[30m\e[1m\r${TIMELINE_L_MARGIN}\b[ ]\e[0m\b"
+}
 function clear_spinner () {
   local SYMBOL=$1
+  local COLUMNS_UP=$2
+  if [ ! -z "${COLUMNS_UP}" ]; then
+    printf "\e[${COLUMNS_UP}A\e[$((${#TIMELINE_L_MARGIN}+1))C"
+  fi
   if [ "${SYMBOL}" = "ok" ]; then
-    printf "\b${CHECK_SYMBOL}\b\033[1C"
+    printf "\b${CHECK_SYMBOL}\b\e[1C"
   elif [ "${SYMBOL}" = "fail" ]; then
-    printf "\b${CANCEL_SYMBOL}\b\033[1C"
+    printf "\b${CANCEL_SYMBOL}\b\e[1C"
+  fi
+  if [ ! -z "${COLUMNS_UP}" ]; then
+    printf "\e[${COLUMNS_UP}B\r"
   fi
 }
 function catch_error () {
@@ -133,13 +152,13 @@ function catch_error () {
 }
 function display_help () {
   printf "
-                                  \e[1m██▄███▄ ██▌ ▐██ ██▌ ▐██\e[0m
-                                  \e[1m██▌ ▐██ ██▌ ▐██ ██▌ ▐██\e[0m
-                                  \e[1m██▌ ▐███▀███▀██ ▀███▀██\e[0m
-                                   NUU Group Engineering
- \e[34m▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄\e[0m\b
- \e[1m\e[44m  S1 Project Setup Script                       ${VERSION}  \e[0m\b
- \e[34m▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀\e[0m\b
+                                   \e[1m██▄███▄ ██▌ ▐██ ██▌ ▐██\e[0m
+                                   \e[1m██▌ ▐██ ██▌ ▐██ ██▌ ▐██\e[0m
+                                   \e[1m██▌ ▐███▀███▀██ ▀███▀██\e[0m
+                                    NUU Group Engineering
+ \e[34m▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄\e[0m\b
+ \e[1m\e[44m  S1 Project Setup Script                        ${VERSION}  \e[0m\b
+ \e[34m▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀\e[0m\b
  Tool for creation and initial configuration for projects
  that are built with the following technologies stack:
 
@@ -148,17 +167,32 @@ function display_help () {
  • React Library
  • GraphQL Query Language
 
- \e[1mLanguage: \e[0m
-   English
+ \e[1mUsage:\e[0m
 
- \e[1mUsage:\e[0m\b
-   ${0} [\e[33mapplication_name \e[0m\b]
+   ${0} [\e[33mapplication_name\e[0m]
 
- \e[1mOptions:\e[0m\b
-   -h --help
-      --path [\e[33mruta_destino \e[0m\b]
-      --module [\e[33mmódulo_base \e[0m\b]
-      --database [\e[36m\e[1mpostgres\e[35m|\e[36mmysql\e[35m|\e[36mmssql \e[0m\b]\n"
+ \e[1mOptions:\e[0m
+
+   \e[1m-h --help\e[0m
+   Shows the tool documentation.
+   
+   \e[1m-c --credentials\e[0m
+   You will be asked to enter the username and password
+   to connect to the database server as much as the host
+   address and the name of the database for the 
+   application.
+   
+   \e[1m--path\e[0m [\e[33m destination_path \e[0m]
+   Path where the application directory will be created.
+   Default: \"./\"
+
+   \e[1m--module\e[0m [\e[33m base_module \e[0m]
+   Name of the base module of the application.
+   Default: Name of the application (UpperCamelCase)
+
+   \e[1m--database\e[0m [\e[36m\e[1m postgres \e[35m|\e[36m mysql \e[35m|\e[36m mssql \e[0m]
+   Specify the database adapter for Ecto.
+   Default: \"postgres\"\n"
 }
 function display_header () {
   printf "
@@ -178,6 +212,7 @@ function terminate_script () {
 # Asignacion de opciones y argumentos a las variables ------------------------
 while [ "$#" != "0" ]
 do
+  # Opciones largas ------
   if [ "${1:0:2}" = "--" ]; then
     if [ "${1}" = "--help" ]; then 
       display_help
@@ -207,18 +242,24 @@ do
         display_message arg_error "Database not supported" "(Run the script with option \e[1m--help\e[0m for more information)"
         exit 1
       fi
+    elif [ "${1}" = "--credentials" ]; then 
+      CREDENTIALS="true"
     else
       display_message arg_error "The \e[1m${1}\e[0m option does not exists"
       exit 1
     fi
+  # Opciones cortas ------
   elif [ "${1:0:1}" = "-" ]; then
     if [ "${1}" = "-h" ]; then 
       display_help
       exit 0
+    elif [ "${1}" = "-c" ]; then 
+      CREDENTIALS="true"
     else
       display_message arg_error "The \e[1m${1}\e[0m option does not exists"
       exit 1
     fi
+  # Argumentos ------
   else
     if [ "${ARGS_COUNT}" = "0" ]; then 
       PROJECT_NAME=$(awk '{print tolower($0)}' <<< "$1")
@@ -243,6 +284,18 @@ fi
 if [ -z "${DATABASE}" ]; then
   DATABASE="postgres"
 fi
+if [ "${DATABASE}" = "postgres" ]; then
+  DEFAULT_DB_USER="postgres"
+  DEFAULT_DB_PASS="postgres"
+elif [ "${DATABASE}" = "mysql" ]; then
+  DEFAULT_DB_USER="root"
+  DEFAULT_DB_PASS=""
+elif [ "${DATABASE}" = "mssql" ]; then
+  DEFAULT_DB_USER="sa"
+  DEFAULT_DB_PASS=""
+fi
+DEFAULT_DB_NAME="${PROJECT_NAME}_dev"
+DEFAULT_DB_HOST="localhost"
 # Validaciones de argumentos -------------------------------------------------
 if [ -z "${PROJECT_NAME}" ]; then
   display_message arg_error "Its needed to specify the name of the project" "(Run the script with option \e[1m--help\e[0m for more information)"
@@ -257,6 +310,7 @@ if [ -d "${PROJECT_NAME}" ]; then
   display_message arg_error "The directory \"${TARGET_PATH}${PROJECT_NAME}\" already exists:" "Select another project name for installation"
   exit 1
 fi
+
 # Funciones de proceso -------------------------------------------------------
 function validations () {
   # Se checa que las tecnologías necesarias estén todas instaladas
@@ -266,10 +320,38 @@ function validations () {
     exit 1
   fi
 }
+function credentials () {
+  if [ "${CREDENTIALS}" = true ]; then
+    display_message task "Enter the credentials for the database: "
+    display_spinner_box
+    #------
+    display_message blue " Username"
+    open_input
+    read -re -i "${DEFAULT_DB_USER}" -p " " DB_USER
+    close_input
+    #------
+    display_message blue " Password"
+    open_input
+    read -re -i "${DEFAULT_DB_PASS}" -p " " DB_PASS
+    close_input
+    #------
+    display_message blue " Database"
+    open_input
+    read -re -i "${DEFAULT_DB_NAME}" -p " " DB_NAME
+    close_input
+    #------
+    display_message blue " Hostname"
+    open_input
+    read -re -i "${DEFAULT_DB_HOST}" -p " " DB_HOST
+    close_input
+    #------
+    clear_spinner ok 4
+  fi
+}
 function task1 () {
   display_message task "Creating Phoenix project "
   {
-  #--- 1 ---
+    #--- 1 ---
     echo y | mix phx.new "${PROJECT_NAME}" --module "${MODULE}" --database "${DATABASE}" &>/dev/null
     catch_error $? "The Phoenix project could not be created correctly"
   } & spinner
@@ -277,20 +359,20 @@ function task1 () {
 function task2 () {
   display_message task "Uninstalling Brunch and relative dependencies "
   {
-  #--- 2 ---
+    #--- 2 ---
     cd "${PROJECT_NAME}/assets" &>/dev/null
     catch_error $? "The \"${PROJECT_NAME}/assets\" directory could not be accessed"
-  #--- 3 ---
+    #--- 3 ---
     if [ "${KERNEL}" = "Darwin" ]; then 
       sed -i "" $'s/{},/{},\\\n  "description": " ",/g' package.json &>/dev/null
     else 
       sed -i $'s/{},/{},\\\n  "description": " ",/g' package.json &>/dev/null
     fi
     catch_error $? "Unable to add description to \"package.json\" file"
-  #--- 4 ---
+    #--- 4 ---
     npm uninstall --save-dev brunch babel-brunch clean-css-brunch uglify-js-brunch &>/dev/null
     catch_error $? "The uninstallation via NPM could not be executed correctly"
-  #--- 5 ---
+    #--- 5 ---
     rm brunch-config.js &>/dev/null
     catch_error $? "The \"${PROJECT_NAME}/assets/brunch-config.js\" file could not be deleted"
   } & spinner
@@ -298,10 +380,10 @@ function task2 () {
 function task3 () {
   display_message task "Installing Webpack, React, GraphQL and other dependencies "
   {
-  #--- 6 ---
+    #--- 6 ---
     cd "${PROJECT_NAME}/assets" &>/dev/null
     catch_error $? "The \"${PROJECT_NAME}/assets\" directory could not be accessed"
-  #--- 7 ---
+    #--- 7 ---
     npm install --save-dev webpack webpack-cli copy-webpack-plugin uglifyjs-webpack-plugin graphql react react-dom react-router-dom prop-types @babel/core @babel/cli @babel/preset-env @babel/preset-react @babel/plugin-proposal-class-properties babel-loader css-loader url-loader file-loader mini-css-extract-plugin optimize-css-assets-webpack-plugin &>/dev/null
     catch_error $? "The installation via NPM could not be executed correctly"
   } & spinner
@@ -309,13 +391,13 @@ function task3 () {
 function task4 () {
   display_message task "Configuring dependencies and project file structure "
   {
-  #--- 8 ---
+    #--- 8 ---
     cd "${PROJECT_NAME}/assets" &>/dev/null
     catch_error $? "The \"${PROJECT_NAME}/assets\" directory could not be accessed"
-  #--- 9 ---
+    #--- 9 ---
     touch webpack.config.js &>/dev/null
     catch_error $? "The \"${PROJECT_NAME}/assets/webpack.config.js\" file could not be created"
-  #--- 10 ---
+    #--- 10 ---
     cat &>/dev/null <<EOM >"webpack.config.js"
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
@@ -375,37 +457,37 @@ module.exports = (env, options) => ({
 });
 EOM
     catch_error $? "Unable to add content to \"${PROJECT_NAME}/assets/webpack.config.js\" file"
-  #--- 11 ---
+    #--- 11 ---
     if [ "${KERNEL}" = "Darwin" ]; then
       sed -i "" $'s/"deploy": "brunch build --production"/"deploy": "webpack --mode production"/g' package.json &>/dev/null
     else
       sed -i $'s/"deploy": "brunch build --production"/"deploy": "webpack --mode production"/g' package.json &>/dev/null
     fi
     catch_error $? "Unable to replace script \"deploy\" in \"${PROJECT_NAME}/assets/package.json\" file"
-  #--- 12 ---
+    #--- 12 ---
     if [ "${KERNEL}" = "Darwin" ]; then
       sed -i "" $'s/"watch": "brunch watch --stdin"/"start": "webpack --mode development --watch-stdin --color"/g' package.json &>/dev/null
     else
       sed -i $'s/"watch": "brunch watch --stdin"/"start": "webpack --mode development --watch-stdin --color"/g' package.json &>/dev/null
     fi
     catch_error $? "Unable to replace script \"watch\" in \"${PROJECT_NAME}/assets/package.json\" file"
-  #--- 13 ---
+    #--- 13 ---
     cd ../config &>/dev/null
     catch_error $? "The \"${PROJECT_NAME}/config\" directory could not be accessed"
-  #--- 14 ---
+    #--- 14 ---
     if [ "${KERNEL}" = "Darwin" ]; then
       sed -i "" $'s|watchers: \[node: \["node_modules/brunch/bin/brunch", "watch", "--stdin",|watchers: \[node: \["node_modules/webpack/bin/webpack.js", "--mode", "development", "--watch-stdin", "--color",|g' dev.exs &>/dev/null
     else
       sed -i $'s|watchers: \[node: \["node_modules/brunch/bin/brunch", "watch", "--stdin",|watchers: \[node: \["node_modules/webpack/bin/webpack.js", "--mode", "development", "--watch-stdin", "--color",|g' dev.exs &>/dev/null
     fi
     catch_error $? "Unable to replace script \"watchers\" in \"${PROJECT_NAME}/config/dev.exs\" file"
-  #--- 15 ---
+    #--- 15 ---
     cd ../assets &>/dev/null
     catch_error $? "The \"$PROJECT_NAME/assets\" directory could not be accessed"
-  #--- 16 ---
+    #--- 16 ---
     touch .babelrc &>/dev/null
     catch_error $? "Unable to create \"${PROJECT_NAME}/assets/.babelrc\" file"
-  #--- 17 ---
+    #--- 17 ---
     cat &>/dev/null <<EOM >".babelrc"
 {
   "presets": [
@@ -418,13 +500,13 @@ EOM
 }
 EOM
     catch_error $? "Unable to add content to \"${PROJECT_NAME}/assets/.babelrc\" file"
-  #--- 18 ---
+    #--- 18 ---
     cd js &>/dev/null
     catch_error $? "The \"${PROJECT_NAME}/assets/js\" directory could not be accessed"
-  #--- 19 ---
+    #--- 19 ---
     touch index.js
     catch_error $? "Unable to create \"${PROJECT_NAME}/assets/js/index.js\" file"
-  #--- 20 ---
+    #--- 20 ---
     cat &>/dev/null <<EOM >"index.js"
 // Dependencies
 import React, { Component } from 'react';
@@ -445,81 +527,81 @@ ReactDOM.render(
 EOM
     catch_error $? "Unable to add content to \"${PROJECT_NAME}/assets/js/index.js\" file"
     #--- 21 ---
-      mkdir components &>/dev/null
-      catch_error $? "Unable to create \"${PROJECT_NAME}/assets/js/components\" directory"
+    mkdir components &>/dev/null
+    catch_error $? "Unable to create \"${PROJECT_NAME}/assets/js/components\" directory"
     #--- 22 ---
-      mkdir pages &>/dev/null
-      catch_error $? "Unable to create \"${PROJECT_NAME}/assets/js/pages\" directory"
+    mkdir pages &>/dev/null
+    catch_error $? "Unable to create \"${PROJECT_NAME}/assets/js/pages\" directory"
     #--- 23 ---
-      mkdir data &>/dev/null
-      catch_error $? "Unable to create \"${PROJECT_NAME}/assets/js/data\" directory"
+    mkdir data &>/dev/null
+    catch_error $? "Unable to create \"${PROJECT_NAME}/assets/js/data\" directory"
     #--- 24 ---
-      if [ "$KERNEL" = "Darwin" ]; then
-        sed -i "" $'/"phoenix_html"/a \
-        import css from "..\/css\/app.css"\\\nimport { index } from ".\/index"\\\n' app.js &>/dev/null
-      else
-        sed -i $'/"phoenix_html"/a \import css from "..\/css\/app.css"\\\nimport { index } from ".\/index"\\\n' app.js &>/dev/null
-      fi
-      catch_error $? "Could not add the imports in \"${PROJECT_NAME}/assets/js/app.js\" file"
+    if [ "$KERNEL" = "Darwin" ]; then
+      sed -i "" $'/"phoenix_html"/a \
+      import css from "..\/css\/app.css"\\\nimport { index } from ".\/index"\\\n' app.js &>/dev/null
+    else
+      sed -i $'/"phoenix_html"/a \import css from "..\/css\/app.css"\\\nimport { index } from ".\/index"\\\n' app.js &>/dev/null
+    fi
+    catch_error $? "Could not add the imports in \"${PROJECT_NAME}/assets/js/app.js\" file"
     #--- 25 ---
-      cd ../../lib/"${PROJECT_NAME}"_web/templates/layout &>/dev/null
-      catch_error $? "The \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/layout\" directory could not be accessed"
+    cd ../../lib/"${PROJECT_NAME}"_web/templates/layout &>/dev/null
+    catch_error $? "The \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/layout\" directory could not be accessed"
     #--- 26 ---
-      if [ "${KERNEL}" = "Darwin" ]; then
-        sed -i "" $'/<body>/,/<\/body>/d' app.html.eex &>/dev/null
-      else
-        sed -i $'/<body>/,/<\/body>/d' app.html.eex &>/dev/null
-      fi
-      catch_error $? "Could not replace the code in \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/layout/app.html.eex\" file"
-      if [ "${KERNEL}" = "Darwin" ]; then
-        sed -i "" $'/<\/head>/a \
-        \\\n  <body>\\\n    <main role="main">\\\n      <%= render @view_module, @view_template, assigns %>\\\n    <\/main>\\\n    <script src="<%= static_path(@conn, "\/js\/app.js") %>"><\/script>\\\n  <\/body>' app.html.eex &>/dev/null
-      else
-        sed -i $'/<\/head>/a \
-        \\\n  <body>\\\n    <main role="main">\\\n      <%= render @view_module, @view_template, assigns %>\\\n    <\/main>\\\n    <script src="<%= static_path(@conn, "\/js\/app.js") %>"><\/script>\\\n  <\/body>' app.html.eex &>/dev/null
-      fi
-      catch_error $? "Could not replace the code in \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/layout/app.html.eex\" file"
+    if [ "${KERNEL}" = "Darwin" ]; then
+      sed -i "" $'/<body>/,/<\/body>/d' app.html.eex &>/dev/null
+    else
+      sed -i $'/<body>/,/<\/body>/d' app.html.eex &>/dev/null
+    fi
+    catch_error $? "Could not replace the code in \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/layout/app.html.eex\" file"
+    if [ "${KERNEL}" = "Darwin" ]; then
+      sed -i "" $'/<\/head>/a \
+      \\\n  <body>\\\n    <main role="main">\\\n      <%= render @view_module, @view_template, assigns %>\\\n    <\/main>\\\n    <script src="<%= static_path(@conn, "\/js\/app.js") %>"><\/script>\\\n  <\/body>' app.html.eex &>/dev/null
+    else
+      sed -i $'/<\/head>/a \
+      \\\n  <body>\\\n    <main role="main">\\\n      <%= render @view_module, @view_template, assigns %>\\\n    <\/main>\\\n    <script src="<%= static_path(@conn, "\/js\/app.js") %>"><\/script>\\\n  <\/body>' app.html.eex &>/dev/null
+    fi
+    catch_error $? "Could not replace the code in \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/layout/app.html.eex\" file"
     #--- 27 ---
-      cd ../page &>/dev/null
-      catch_error $? "The \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/page\" directory could not be accessed"
+    cd ../page &>/dev/null
+    catch_error $? "The \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/page\" directory could not be accessed"
     #--- 28 ---
-      echo "<div id=\"root\"></div>" > "index.html.eex" # &>/dev/null
-      catch_error $? "Could not replace the code in \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/page/index.html.eex\" file"
+    echo "<div id=\"root\"></div>" > "index.html.eex" # &>/dev/null
+    catch_error $? "Could not replace the code in \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/templates/page/index.html.eex\" file"
     #--- 29 ---
-      cd ../.. &>/dev/null
-      catch_error $? "The \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web\" directory could not be accessed"
+    cd ../.. &>/dev/null
+    catch_error $? "The \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web\" directory could not be accessed"
     #--- 30 ---
-      if [ "${KERNEL}" = "Darwin" ]; then
-        sed -i "" $'/^\(end\)/i \
-        \\\n  if Mix.env == :dev do\\\n    forward \"/graphiql\", Absinthe.Plug.GraphiQL,\\\n      schema: '"${MODULE}"$'.Graphql.Schema,\\\n      interface: :advanced,\\\n      context: %{pubsub: '"${MODULE}"$'.Endpoint}\\\n  end\\\n' router.ex &>/dev/null
-      else
-        sed -i $'/^\(end\)/i \
-        \\\n  if Mix.env == :dev do\\\n    forward \"/graphiql\", Absinthe.Plug.GraphiQL,\\\n      schema: '"${MODULE}"$'.Graphql.Schema,\\\n      interface: :advanced,\\\n      context: %{pubsub: '"${MODULE}"$'.Endpoint}\\\n  end\\\n' router.ex &>/dev/null
-      fi
-      catch_error $? "Could not add the code in \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/router.ex\" file"
+    if [ "${KERNEL}" = "Darwin" ]; then
+      sed -i "" $'/^\(end\)/i \
+      \\\n  if Mix.env == :dev do\\\n    forward \"/graphiql\", Absinthe.Plug.GraphiQL,\\\n      schema: '"${MODULE}"$'.Graphql.Schema,\\\n      interface: :advanced,\\\n      context: %{pubsub: '"${MODULE}"$'.Endpoint}\\\n  end\\\n' router.ex &>/dev/null
+    else
+      sed -i $'/^\(end\)/i \
+      \\\n  if Mix.env == :dev do\\\n    forward \"/graphiql\", Absinthe.Plug.GraphiQL,\\\n      schema: '"${MODULE}"$'.Graphql.Schema,\\\n      interface: :advanced,\\\n      context: %{pubsub: '"${MODULE}"$'.Endpoint}\\\n  end\\\n' router.ex &>/dev/null
+    fi
+    catch_error $? "Could not add the code in \"${PROJECT_NAME}/lib/${PROJECT_NAME}_web/router.ex\" file"
     #--- 31 ---
-      cd ../"${PROJECT_NAME}" &>/dev/null
-      catch_error $? "The \"${PROJECT_NAME}/lib/${PROJECT_NAME}\" directory could not be accessed"
+    cd ../"${PROJECT_NAME}" &>/dev/null
+    catch_error $? "The \"${PROJECT_NAME}/lib/${PROJECT_NAME}\" directory could not be accessed"
     #--- 32 ---
-      mkdir graphql &>/dev/null
-      catch_error $? "Unable to create \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql\" directory"
+    mkdir graphql &>/dev/null
+    catch_error $? "Unable to create \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql\" directory"
     #--- 33 ---
-      cd graphql &>/dev/null
-      catch_error $? "The \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql\" directory could not be accessed"
+    cd graphql &>/dev/null
+    catch_error $? "The \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql\" directory could not be accessed"
     #--- 34 ---
-      touch queries.ex &>/dev/null
-      catch_error $? "Unable to create \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/queries.ex\" file"
+    touch queries.ex &>/dev/null
+    catch_error $? "Unable to create \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/queries.ex\" file"
     #--- 35 ---
-      touch mutations.ex &>/dev/null
-      catch_error $? "Unable to create \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/mutations.ex\" file"
+    touch mutations.ex &>/dev/null
+    catch_error $? "Unable to create \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/mutations.ex\" file"
     #--- 36 ---
-      touch subscriptions.ex &>/dev/null
-      catch_error $? "Unable to create \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/subscriptions.ex\" file"
+    touch subscriptions.ex &>/dev/null
+    catch_error $? "Unable to create \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/subscriptions.ex\" file"
     #--- 37 ---
-      touch schema.ex &>/dev/null
-      catch_error $? "Unable to create \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/schema.ex\" file"
+    touch schema.ex &>/dev/null
+    catch_error $? "Unable to create \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/schema.ex\" file"
     #--- 38 ---
-      cat &>/dev/null <<EOM >"queries.ex"
+    cat &>/dev/null <<EOM >"queries.ex"
 defmodule $MODULE.Graphql.Queries do
   @moduledoc false
 
@@ -529,9 +611,9 @@ defmodule $MODULE.Graphql.Queries do
   end
 end
 EOM
-      catch_error $? "Unable to add content to \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/queries.ex\" file"
+    catch_error $? "Unable to add content to \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/queries.ex\" file"
     #--- 39 ---
-      cat &>/dev/null <<EOM >"mutations.ex"
+    cat &>/dev/null <<EOM >"mutations.ex"
 defmodule $MODULE.Graphql.Mutations do
   @moduledoc false
 
@@ -541,9 +623,9 @@ defmodule $MODULE.Graphql.Mutations do
   end
 end
 EOM
-      catch_error $? "Unable to add content to \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/mutations.ex\" file"
+    catch_error $? "Unable to add content to \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/mutations.ex\" file"
     #--- 40 ---
-      cat &>/dev/null <<EOM >"subscriptions.ex"
+    cat &>/dev/null <<EOM >"subscriptions.ex"
 defmodule $MODULE.Graphql.Subscriptions do
   @moduledoc false
 
@@ -553,9 +635,9 @@ defmodule $MODULE.Graphql.Subscriptions do
   end
 end
 EOM
-      catch_error $? "Unable to add content to \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/subscriptions.ex\" file"
+    catch_error $? "Unable to add content to \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/subscriptions.ex\" file"
     #--- 41 ---
-      cat &>/dev/null <<EOM >"schema.ex"
+    cat &>/dev/null <<EOM >"schema.ex"
 defmodule $MODULE.Graphql.Schema do
   @moduledoc false
 
@@ -572,26 +654,60 @@ defmodule $MODULE.Graphql.Schema do
   subscription [], do: import_fields :subscriptions
 end
 EOM
-      catch_error $? "Unable to add content to \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/schema.ex\" file"
+    catch_error $? "Unable to add content to \"${PROJECT_NAME}/lib/${PROJECT_NAME}/graphql/schema.ex\" file"
+    #------
+    if [ "${CREDENTIALS}" = true ]; then
+      #--- 41.1 ---
+      cd ../../../config &>/dev/null
+      catch_error $? "The \"${PROJECT_NAME}/config\" directory could not be accessed"
+      #--- 41.2 ---
+      if [ "${KERNEL}" = "Darwin" ]; then 
+        sed -i "" $'s|username: "'"${DEFAULT_DB_USER}"$'"|username: "'"${DB_USER}"$'"|' dev.exs &>/dev/null
+      else 
+        sed -i $'s|username: "'"${DEFAULT_DB_USER}"$'"|username: "'"${DB_USER}"$'"|' dev.exs &>/dev/null
+      fi
+      catch_error $? "Unable to configure the user name in \"dev.exs\" file"
+      #--- 41.3 ---
+      if [ "${KERNEL}" = "Darwin" ]; then 
+        sed -i "" $'s|password: "'"${DEFAULT_DB_PASS}"$'"|password: "'"${DB_PASS}"$'"|' dev.exs &>/dev/null
+      else 
+        sed -i $'s|password: "'"${DEFAULT_DB_PASS}"$'"|password: "'"${DB_PASS}"$'"|' dev.exs &>/dev/null
+      fi
+      catch_error $? "Unable to configure the password in \"dev.exs\" file"
+      #--- 41.4 ---
+      if [ "${KERNEL}" = "Darwin" ]; then 
+        sed -i "" $'s|database: "'"${DEFAULT_DB_NAME}"$'"|database: "'"${DB_NAME}"$'"|' dev.exs &>/dev/null
+      else 
+        sed -i $'s|database: "'"${DEFAULT_DB_NAME}"$'"|database: "'"${DB_NAME}"$'"|' dev.exs &>/dev/null
+      fi
+      catch_error $? "Unable to configure database name in \"dev.exs\" file"
+      #--- 41.5 ---
+      if [ "${KERNEL}" = "Darwin" ]; then 
+        sed -i "" $'s|hostname: "'"${DEFAULT_DB_HOST}"$'"|hostname: "'"${DB_HOST}"$'"|' dev.exs &>/dev/null
+      else 
+        sed -i $'s|hostname: "'"${DEFAULT_DB_HOST}"$'"|hostname: "'"${DB_HOST}"$'"|' dev.exs &>/dev/null
+      fi
+      catch_error $? "Unable to configure database host name in \"dev.exs\" file"
+    fi
   } & spinner
 }
 function task5 () {
   display_message task "Compiling dependencies for Phoenix "
   {
-  #--- 42 ---
+    #--- 42 ---
     cd "${PROJECT_NAME}" &>/dev/null
     catch_error $? "The \"${PROJECT_NAME}\" directory could not be accessed"
-  #--- 43 ---
+    #--- 43 ---
     if [ "${KERNEL}" = "Darwin" ]; then
       sed -E -i "" $'s/{:cowboy, "~> [0-9]+\.[0-9]+"}/{:plug_cowboy, "~> 1.0"},\\\n      {:absinthe, "~> 1.4.13"},\\\n      {:absinthe_ecto, "~> 0.1.3"},\\\n      {:absinthe_plug, "~> 1.4.6"},\\\n      {:absinthe_phoenix, "~> 1.4.3"}/' mix.exs &>/dev/null
     else
       sed -i $'s/{:cowboy, "~> [0-9][0-9]*\.[0-9][0-9]*"}/{:plug_cowboy, "~> 1.0"},\\\n      {:absinthe, "~> 1.4.13"},\\\n      {:absinthe_ecto, "~> 0.1.3"},\\\n      {:absinthe_plug, "~> 1.4.6"},\\\n      {:absinthe_phoenix, "~> 1.4.3"}/' mix.exs &>/dev/null
     fi
     catch_error $? "The dependencies could not be modified in \"${PROJECT_NAME}/mix.exs\" file"
-  #--- 44 ---
+    #--- 44 ---
     mix deps.get &>/dev/null
     catch_error $? "Unable to download dependencies for Phoenix"
-  #--- 45 ---
+    #--- 45 ---
     mix deps.compile &>/dev/null
     catch_error $? "Unable to compile dependencies for Phoenix"
   } & spinner
@@ -662,15 +778,16 @@ printf "\e[?25l"
 display_header
 step
 validations
-# ------------------------------------------------------------------------------
+# ---------------
 
+credentials
 task1
 task2
 task3
 task4
 task5
 
-# ------------------------------------------------------------------------------
+# ---------------
 step
 display_message green "The project has been created and configured correctly!"
 printf "
@@ -678,9 +795,15 @@ printf "
  Go into your application by running:
  
    \e[1m$ cd ${TARGET_PATH}${PROJECT_NAME}\e[0m
- 
- Then configure your database in config/dev.exs and run:
- 
+
+ "
+if [ "${CREDENTIALS}" = true ]; then
+  printf "Then create the database by running:"
+else
+  printf "Then configure your database in config/dev.exs and run:"
+fi
+printf "
+
    \e[1m$ mix ecto.create\e[0m
  
  Start your Phoenix app with:
@@ -695,4 +818,3 @@ printf "
 printf "\e[?25h"
 exit 0
 # ==============================================================================
-

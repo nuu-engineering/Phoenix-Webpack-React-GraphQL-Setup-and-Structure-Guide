@@ -1,6 +1,6 @@
 # -*- ENCODING: UTF-8 -*-
 #!/bin/bash
-VERSION="v1.0.6"
+VERSION="v1.0.7"
 trap terminate_script SIGINT
 
 # Variables ====================================================================

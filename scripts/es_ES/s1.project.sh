@@ -308,7 +308,7 @@ if [ ! -d "${TARGET_PATH}" ]; then
   display_message arg_error "La ruta donde se creará el proyecto no existe"
   exit 1
 fi
-cd ${TARGET_PATH}
+cd "${TARGET_PATH}"
 if [ -d "${PROJECT_NAME}" ]; then
   display_message arg_error "Ya existe el directorio \"${TARGET_PATH}${PROJECT_NAME}\":" "Selecciona otro directorio para la instalación"
   exit 1

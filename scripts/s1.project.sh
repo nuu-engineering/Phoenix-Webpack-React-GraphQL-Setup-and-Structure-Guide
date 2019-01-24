@@ -308,7 +308,7 @@ if [ ! -d "${TARGET_PATH}" ]; then
   display_message arg_error "The path where the project will be created does not exist"
   exit 1
 fi
-cd ${TARGET_PATH}
+cd "${TARGET_PATH}"
 if [ -d "${PROJECT_NAME}" ]; then
   display_message arg_error "The directory \"${TARGET_PATH}${PROJECT_NAME}\" already exists:" "Select another project name for installation"
   exit 1

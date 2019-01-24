@@ -1,6 +1,6 @@
 # -*- ENCODING: UTF-8 -*-
 #!/bin/bash
-VERSION="v1.0.5"
+VERSION="v1.0.6"
 trap terminate_script SIGINT
 
 # Variables ====================================================================
@@ -287,12 +287,15 @@ fi
 if [ "${DATABASE}" = "postgres" ]; then
   DEFAULT_DB_USER="postgres"
   DEFAULT_DB_PASS="postgres"
+  DEFAULT_DB_PORT="5432"
 elif [ "${DATABASE}" = "mysql" ]; then
   DEFAULT_DB_USER="root"
   DEFAULT_DB_PASS=""
+  DEFAULT_DB_PORT="3306"
 elif [ "${DATABASE}" = "mssql" ]; then
   DEFAULT_DB_USER="sa"
   DEFAULT_DB_PASS=""
+  DEFAULT_DB_PORT="1433"
 fi
 DEFAULT_DB_NAME="${PROJECT_NAME}_dev"
 DEFAULT_DB_HOST="localhost"
@@ -345,7 +348,12 @@ function credentials () {
     read -re -i "${DEFAULT_DB_HOST}" -p " " DB_HOST
     close_input
     #------
-    clear_spinner ok 4
+    display_message blue " Port"
+    open_input
+    read -re -i "${DEFAULT_DB_PORT}" -p " " DB_PORT
+    close_input
+    #------
+    clear_spinner ok 5
   fi
 }
 function task1 () {
@@ -688,6 +696,13 @@ EOM
         sed -i $'s|hostname: "'"${DEFAULT_DB_HOST}"$'"|hostname: "'"${DB_HOST}"$'"|' dev.exs &>/dev/null
       fi
       catch_error $? "No se pudo configurar el nombre del host en el archivo \"dev.exs\""
+      #--- 41.6 ---
+      if [ "${KERNEL}" = "Darwin" ]; then 
+        sed -i "" $'s|pool_size:|port: "'"${DB_PORT}"$'",\\\n  pool_size:|' dev.exs &>/dev/null
+      else 
+        sed -i $'s|pool_size:|port: "'"${DB_PORT}"$'",\\\n  pool_size:|' dev.exs &>/dev/null
+      fi
+      catch_error $? "Unable to configure database server port in \"dev.exs\" file"
     fi
   } & spinner
 }
